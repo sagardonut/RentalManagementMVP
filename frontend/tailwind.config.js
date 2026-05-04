@@ -1,0 +1,75 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "on-primary-fixed-variant": "#0040a1",
+        "on-primary": "#ffffff",
+        "on-primary-fixed": "#001847",
+        "secondary-fixed-dim": "#bac7de",
+        "tertiary": "#822800",
+        "inverse-on-surface": "#f0f0fb",
+        "on-primary-container": "#ccd8ff",
+        "tertiary-fixed-dim": "#ffb59b",
+        "surface-container-high": "#e7e7f2",
+        "surface-bright": "#faf8ff",
+        "surface-dim": "#d9d9e4",
+        "on-error": "#ffffff",
+        "on-surface": "#191b23",
+        "outline-variant": "#c3c6d6",
+        "on-surface-variant": "#424654",
+        "tertiary-fixed": "#ffdbcf",
+        "primary": "#0040a1",
+        "on-secondary-container": "#586579",
+        "secondary-fixed": "#d6e3fb",
+        "surface-container": "#ededf8",
+        "surface-variant": "#e1e2ec",
+        "on-secondary-fixed": "#0f1c2d",
+        "error": "#ba1a1a",
+        "surface-container-lowest": "#ffffff",
+        "on-background": "#191b23",
+        "surface": "#faf8ff",
+        "primary-fixed-dim": "#b2c5ff",
+        "primary-container": "#0056d2",
+        "on-tertiary-fixed-variant": "#812800",
+        "surface-tint": "#0056d2",
+        "on-tertiary-fixed": "#380d00",
+        "on-error-container": "#93000a",
+        "on-secondary-fixed-variant": "#3b485a",
+        "primary-fixed": "#dae2ff",
+        "inverse-primary": "#b2c5ff",
+        "error-container": "#ffdad6",
+        "outline": "#737785",
+        "on-tertiary": "#ffffff",
+        "on-tertiary-container": "#ffcebd",
+        "inverse-surface": "#2e3038",
+        "secondary-container": "#d6e3fb",
+        "on-secondary": "#ffffff",
+        "tertiary-container": "#a93802",
+        "surface-container-highest": "#e1e2ec",
+        "background": "#faf8ff",
+        "secondary": "#525f73"
+      },
+      fontFamily: {
+        "headline": ["Inter", "sans-serif"],
+        "body": ["Inter", "sans-serif"],
+        "label": ["Inter", "sans-serif"]
+      },
+      borderRadius: {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries')
+  ],
+}
