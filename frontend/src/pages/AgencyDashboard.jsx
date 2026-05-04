@@ -170,14 +170,19 @@ export default function AgencyDashboard() {
         ? JSON.parse(localStorage.getItem('user')).token
         : null;
 
+      console.log('Updating agent:', editingAgent._id);
+      console.log('Token:', token ? 'Present' : 'Missing');
+
       const response = await fetch(`${API}/users/${editingAgent._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
         body: JSON.stringify(agentForm)
       });
+
+      console.log('Response status:', response.status);
 
       if (response.ok) {
         const updatedAgent = await response.json();
@@ -192,8 +197,10 @@ export default function AgencyDashboard() {
           specialization: ''
         });
         fetchAll(); // Refresh the agents list
+        alert('Agent updated successfully');
       } else {
         const error = await response.json();
+        console.error('Update error:', error);
         alert('Failed to update agent: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
@@ -208,20 +215,27 @@ export default function AgencyDashboard() {
         ? JSON.parse(localStorage.getItem('user')).token
         : null;
 
+      console.log('Deleting agent:', agentToDelete._id);
+      console.log('Token:', token ? 'Present' : 'Missing');
+
       const response = await fetch(`${API}/users/${agentToDelete._id}`, {
         method: 'DELETE',
-        headers: {
+        headers: token ? {
           'Authorization': `Bearer ${token}`
-        }
+        } : {}
       });
 
+      console.log('Response status:', response.status);
+      
       if (response.ok) {
         setAgents(agents.filter(agent => agent._id !== agentToDelete._id));
         setShowDeleteModal(false);
         setAgentToDelete(null);
         fetchAll(); // Refresh the agents list
+        alert('Agent deleted successfully');
       } else {
         const error = await response.json();
+        console.error('Delete error:', error);
         alert('Failed to delete agent: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
@@ -250,20 +264,27 @@ export default function AgencyDashboard() {
 
       const newIsActive = agent.isActive === undefined ? false : !agent.isActive;
       
+      console.log('Toggling agent status:', agent._id, 'to', newIsActive);
+      console.log('Token:', token ? 'Present' : 'Missing');
+
       const response = await fetch(`${API}/users/${agent._id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
         body: JSON.stringify({ isActive: newIsActive })
       });
+
+      console.log('Response status:', response.status);
 
       if (response.ok) {
         const updatedAgent = await response.json();
         setAgents(agents.map(a => a._id === agent._id ? updatedAgent : a));
         fetchAll(); // Refresh the agents list
       } else {
+        const error = await response.json();
+        console.error('Toggle error:', error);
         alert('Failed to update agent status');
       }
     } catch (error) {
@@ -436,8 +457,10 @@ export default function AgencyDashboard() {
               getInitials={getInitials}
               onEdit={openEditModal}
               onDelete={(agent) => {
+                console.log('onDelete handler called with agent:', agent);
                 setAgentToDelete(agent);
                 setShowDeleteModal(true);
+                console.log('Setting showDeleteModal to true');
               }}
               onToggleStatus={handleToggleAgentStatus}
             />
@@ -590,7 +613,10 @@ function AgentTable({ agents, loading, getInitials, onEdit, onDelete, onToggleSt
                     <span className="material-symbols-outlined text-xl">edit</span>
                   </button>
                   <button 
-                    onClick={() => onDelete(agent)}
+                    onClick={() => {
+                      console.log('Delete button clicked for agent:', agent);
+                      onDelete(agent);
+                    }}
                     className="p-2 text-on-surface-variant hover:text-error transition-colors rounded-lg"
                   >
                     <span className="material-symbols-outlined text-xl">delete</span>
@@ -831,7 +857,7 @@ function RoomGrid({ rooms, loading, getInitials }) {
       )}
 
       {/* Delete Agent Confirmation Modal */}
-      {showDeleteModal && agentToDelete && (
+      {console.log('Checking modal render:', showDeleteModal, agentToDelete) || (showDeleteModal && agentToDelete) && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <h3 className="text-xl font-bold mb-2">Delete Agent</h3>
@@ -846,7 +872,10 @@ function RoomGrid({ rooms, loading, getInitials }) {
                 Cancel
               </button>
               <button
-                onClick={handleDeleteAgent}
+                onClick={() => {
+                  console.log('Modal delete button clicked');
+                  handleDeleteAgent();
+                }}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
                 Delete Agent
