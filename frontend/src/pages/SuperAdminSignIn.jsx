@@ -52,7 +52,7 @@ export default function SuperAdminSignIn() {
           {/* Card */}
           <div className="bg-surface-container-lowest rounded-2xl shadow-[0_24px_64px_rgba(0,64,161,0.08)] border border-outline-variant/20 overflow-hidden">
             {/* Top Banner */}
-            <div className="bg-red-600 px-8 pt-8 pb-6">
+            <div className="bg-primary px-8 pt-8 pb-6">
               <p className="text-on-primary/60 text-[0.65rem] font-black uppercase tracking-[0.2em] mb-1">System Console</p>
               <h1 className="text-2xl font-black text-on-primary tracking-tighter">Super</h1>
               <h2 className="text-3xl font-black text-on-primary/80 tracking-tighter">Administrator</h2>
@@ -72,7 +72,7 @@ export default function SuperAdminSignIn() {
                   <input
                     name="email" type="email" required
                     value={formData.email} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-red-600/20 focus:border-red-600 text-on-surface font-medium transition-all"
+                    className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface font-medium transition-all"
                     placeholder="superadmin@urbansanctuary.com"
                   />
                 </div>
@@ -81,14 +81,14 @@ export default function SuperAdminSignIn() {
                   <input
                     name="password" type="password" required
                     value={formData.password} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-red-600/20 focus:border-red-600 text-on-surface font-medium transition-all"
+                    className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface font-medium transition-all"
                     placeholder="••••••••"
                     autoComplete="current-password"
                   />
                 </div>
                 <button
                   type="submit" disabled={loading}
-                  className="w-full bg-red-600 text-on-primary py-4 rounded-xl font-bold text-base shadow-[0_8px_24px_rgba(220,38,38,0.2)] hover:bg-red-700 transition-all active:scale-[0.98] disabled:opacity-50 mt-2"
+                  className="w-full bg-primary text-on-primary py-4 rounded-xl font-bold text-base shadow-[0_8px_24px_rgba(0,64,161,0.2)] hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 mt-2"
                 >
                   {loading ? 'Signing In...' : 'Sign In to Super Admin Dashboard'}
                 </button>
