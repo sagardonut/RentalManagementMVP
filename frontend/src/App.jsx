@@ -22,6 +22,7 @@ import SuperAdminSignIn from './pages/SuperAdminSignIn';
 import LoginEntry from './pages/LoginEntry';
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -67,6 +68,9 @@ function App() {
               <SuperAdminDashboard />
             </ProtectedRoute>
           } />
+          
+          {/* Catch-All 404 Route */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
       <ChatBot />
