@@ -70,3 +70,23 @@ exports.getUserBookings = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.cancelBooking = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const booking = await Booking.findById(bookingId);
+    
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    if (booking.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to cancel this booking' });
+    }
+
+    await Booking.findByIdAndDelete(bookingId);
+    res.status(200).json({ message: 'Booking cancelled successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

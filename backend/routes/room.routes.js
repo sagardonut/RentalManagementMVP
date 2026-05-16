@@ -5,6 +5,7 @@ const { protect, agentOnly } = require('../middlewares/auth.middleware');
 
 // Public
 router.get('/', roomController.getRooms);
+router.get('/locations', roomController.getLocations);
 router.get('/:id', roomController.getRoomById);
 
 // Protected (agent must be logged in)

@@ -122,10 +122,10 @@ async function fetchContextData(role, userId = null, message = '') {
       locations,
       priceRange: priceRange[0]
         ? {
-            min: priceRange[0].min,
-            max: priceRange[0].max,
-            avg: Math.round(priceRange[0].avg),
-          }
+          min: priceRange[0].min,
+          max: priceRange[0].max,
+          avg: Math.round(priceRange[0].avg),
+        }
         : null,
       paymentMethods: ['eSewa', 'Khalti'],
       bookingPathPattern: '/booking/:roomId',

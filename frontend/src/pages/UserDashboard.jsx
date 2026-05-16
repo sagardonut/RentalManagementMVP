@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AgentCard from '../components/common/AgentCard';
 import RoomCard from '../components/common/RoomCard';
@@ -94,12 +94,33 @@ export default function UserDashboard() {
     setSelectedAgentId(null);
   };
 
+  const handleCancelBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to cancel this booking?')) return;
+    try {
+      const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : null;
+      const response = await fetch(`http://localhost:5001/api/bookings/${bookingId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setBookings(prev => prev.filter(b => b._id !== bookingId));
+      } else {
+        alert('Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error('Error canceling booking:', error);
+      alert('An error occurred');
+    }
+  };
+
   return (
     <div className="bg-surface text-on-surface min-h-screen flex">
       {/* SideNavBar */}
       <aside className="h-screen w-64 fixed left-0 top-0 z-40 flex flex-col border-r border-slate-200 dark:border-slate-800 p-4 gap-2 bg-slate-50 dark:bg-slate-950">
         <div className="mb-8 px-4">
-          <h1 className="text-lg font-black text-blue-800 dark:text-blue-300 tracking-tighter">The Urban Sanctuary</h1>
+          <Link to="/">
+            <h1 className="text-lg font-black text-blue-800 dark:text-blue-300 tracking-tighter hover:text-blue-600 transition-colors">The Urban Sanctuary</h1>
+          </Link>
           <p className="text-xs text-slate-500 font-medium">Property Management</p>
         </div>
         <nav className="flex-1 flex flex-col gap-1">
@@ -126,10 +147,6 @@ export default function UserDashboard() {
           </button>
         </nav>
         <div className="mt-auto border-t border-slate-200 dark:border-slate-800 pt-4 flex flex-col gap-1">
-          <a className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
-            <span className="material-symbols-outlined">settings</span>
-            <span className="text-sm font-medium">Settings</span>
-          </a>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-xl transition-all hover:translate-x-1 duration-200 w-full"
@@ -203,10 +220,16 @@ export default function UserDashboard() {
                           <span className="font-bold text-primary">NPR {booking.roomId?.pricePerMonth?.toLocaleString() || 'N/A'}/mo</span>
                           <span className="text-on-surface-variant">{booking.numRooms || 1} room(s)</span>
                         </div>
-                        <div className="mt-4 pt-4 border-t border-outline-variant/20">
+                        <div className="mt-4 pt-4 border-t border-outline-variant/20 flex justify-between items-center">
                           <p className="text-xs text-on-surface-variant">
                             Booked on: {new Date(booking.createdAt).toLocaleDateString()}
                           </p>
+                          <button 
+                            onClick={() => handleCancelBooking(booking._id)}
+                            className="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
+                          >
+                            Cancel
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -228,13 +251,6 @@ export default function UserDashboard() {
                 {agents.map(agent => (
                   <AgentCard key={agent._id} agent={agent} onViewListings={handleViewListings} />
                 ))}
-                {/* Featured Growth Card */}
-                <div className="bg-primary text-on-primary rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-center">
-                  <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                  <span className="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-2 relative z-10">Network Growth</span>
-                  <h4 className="text-4xl font-black mb-1 relative z-10">24+</h4>
-                  <p className="text-primary-fixed leading-relaxed text-sm font-medium relative z-10">New properties added this week across the Kathmandu Valley.</p>
-                </div>
               </div>
             </section>
           )}

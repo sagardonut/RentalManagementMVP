@@ -11,7 +11,7 @@ export default function BookingPayment() {
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedRooms, setSelectedRooms] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState('esewa');
+  const [paymentMethod, setPaymentMethod] = useState('khalti');
 
   useEffect(() => {
     if (!user) {
@@ -34,10 +34,95 @@ export default function BookingPayment() {
     fetchRoom();
   }, [roomId, user, navigate]);
 
-  const priceMap = { 1: 2000, 2: 3000, 3: 4000 };
-  const serviceFee = priceMap[selectedRooms];
+  const serviceFee = room ? room.pricePerMonth * selectedRooms : 0;
 
-  const handleBooking = async () => {
+  const handleKhaltiPayment = () => {
+    if (!window.KhaltiCheckout) {
+      alert("Khalti SDK not loaded. Please try again.");
+      return;
+    }
+
+    const config = {
+      publicKey: "test_public_key_dc74e0fd57cb46cd93832aee0a390234",
+      productIdentity: roomId,
+      productName: room?.title || "Room Booking",
+      productUrl: window.location.href,
+      paymentPreference: ["KHALTI", "EBANKING", "MOBILE_BANKING"],
+      eventHandler: {
+        onSuccess(payload) {
+          console.log("Khalti success:", payload);
+          createBookingAndRedirect();
+        },
+        onError(error) {
+          console.error("Khalti error:", error);
+          alert("Payment failed or was cancelled.");
+        },
+        onClose() {
+          console.log("Khalti widget closed");
+        }
+      }
+    };
+
+    const checkout = new window.KhaltiCheckout(config);
+    // Amount in paisa
+    checkout.show({ amount: serviceFee * 100 });
+  };
+
+  const handleEsewaPayment = async () => {
+    // For eSewa, we must redirect. We will create the booking first, then redirect to eSewa.
+    // In a real production app, booking would be 'pending' and updated via eSewa callback.
+    try {
+      const res = await fetch('http://localhost:5001/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify({
+          roomId,
+          numRooms: selectedRooms,
+          paymentMethod: 'esewa',
+          totalAmount: serviceFee
+        })
+      });
+
+      if (!res.ok) throw new Error('Failed to create booking');
+      const bookingData = await res.json();
+
+      const path = "https://uat.esewa.com.np/epay/main";
+      const params = {
+        amt: serviceFee,
+        psc: 0,
+        pdc: 0,
+        txAmt: 0,
+        tAmt: serviceFee,
+        pid: bookingData._id,
+        scd: "EPAYTEST",
+        su: `http://localhost:5173/user/dashboard?tab=bookings`,
+        fu: `http://localhost:5173/booking/${roomId}`
+      };
+
+      const form = document.createElement("form");
+      form.setAttribute("method", "POST");
+      form.setAttribute("action", path);
+
+      for (const key in params) {
+        const hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", params[key]);
+        form.appendChild(hiddenField);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch (err) {
+      console.error('eSewa error:', err);
+      alert('Failed to initiate eSewa payment');
+    }
+  };
+
+  const createBookingAndRedirect = async () => {
     try {
       const res = await fetch('http://localhost:5001/api/bookings', {
         method: 'POST',
@@ -71,6 +156,29 @@ export default function BookingPayment() {
     }
   };
 
+  const handleBooking = () => {
+    if (paymentMethod === 'khalti') {
+      handleKhaltiPayment();
+    } else if (paymentMethod === 'esewa') {
+      handleEsewaPayment();
+    } else {
+      createBookingAndRedirect();
+    }
+  };
+
+  // Dynamically load Khalti SDK
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "https://khalti.s3.ap-south-1.amazonaws.com/KPG/dist/2020.12.17.0.0.0/khalti-checkout.iffe.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
@@ -93,45 +201,46 @@ export default function BookingPayment() {
   return (
     <div className="bg-[#FAFBFE] min-h-screen">
       <Navbar />
-      
+
       <main className="max-w-screen-xl mx-auto px-6 pt-32 pb-20">
         <div className="max-w-3xl mb-12">
           <h1 className="text-[44px] font-black text-[#0040A1] leading-tight mb-4 tracking-tight">Complete Your Booking</h1>
           <p className="text-slate-500 text-lg font-medium leading-relaxed">
-            Secure your dream residence in Kathmandu. Finalize the service fee payment to confirm your booking and unlock agent assistance.
+            Secure your residence using Dev/Test payment modes. Confirm your booking by proceeding with eSewa or Khalti test payments.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Side: Steps */}
           <div className="lg:col-span-12 xl:col-span-8 space-y-12">
-            
+
             {/* Step 1: Number of Rooms */}
             <section className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-full bg-[#0040A1] text-white flex items-center justify-center font-bold text-sm">1</div>
                 <h2 className="text-xl font-bold text-slate-900">Number of Rooms</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { id: 1, label: '1 Room', sub: 'Single Unit', price: 'Rs. 2,000', priceNum: 2000 },
-                  { id: 2, label: '2 Rooms', sub: 'Duo Package', price: 'Rs. 3,000', priceNum: 3000 },
-                  { id: 3, label: '3 Rooms', sub: 'Full Flat/Suite', price: 'Rs. 4,000', priceNum: 4000 }
+                  { id: 1, label: '1 Room', sub: 'Single Unit', multiplier: 1 },
+                  { id: 2, label: '2 Rooms', sub: 'Duo Package', multiplier: 2 },
+                  { id: 3, label: '3 Rooms', sub: 'Full Flat/Suite', multiplier: 3 }
                 ].map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setSelectedRooms(item.id)}
-                    className={`flex flex-col items-start p-6 rounded-xl border-2 transition-all duration-200 text-left bg-white ${
-                      selectedRooms === item.id 
-                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]' 
-                      : 'border-slate-100 hover:border-slate-200'
-                    }`}
+                    className={`flex flex-col items-start p-6 rounded-xl border-2 transition-all duration-200 text-left bg-white ${selectedRooms === item.id
+                        ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]'
+                        : 'border-slate-100 hover:border-slate-200'
+                      }`}
                   >
                     <span className="material-symbols-outlined text-[#0040A1] mb-4 text-xl">bed</span>
                     <span className="text-lg font-bold text-slate-900 mb-1">{item.label}</span>
                     <span className="text-sm text-slate-500 mb-4">{item.sub}</span>
-                    <span className="text-lg font-black text-[#0040A1]">{item.price}</span>
+                    <span className="text-lg font-black text-[#0040A1]">
+                      Rs. {room ? (room.pricePerMonth * item.multiplier).toLocaleString() : 0}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -141,22 +250,22 @@ export default function BookingPayment() {
             <section className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-full bg-[#0040A1] text-white flex items-center justify-center font-bold text-sm">2</div>
-                <h2 className="text-xl font-bold text-slate-900">Payment Method</h2>
+                <h2 className="text-xl font-bold text-slate-900">Payment Method (Test Mode)</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
-                  { id: 'esewa', label: 'eSewa Wallet', sub: 'Instant Transfer', icon: 'e', color: 'bg-[#60BB46]' },
-                  { id: 'khalti', label: 'Khalti Wallet', sub: 'Secure Payment', icon: 'k', color: 'bg-[#5C2D91]' }
+                  { id: 'esewa', label: 'eSewa Wallet', sub: 'Available Soon', icon: 'e', color: 'bg-slate-400', disabled: true },
+                  { id: 'khalti', label: 'Khalti Wallet', sub: 'Test Checkout Widget', icon: 'k', color: 'bg-[#5C2D91]' }
                 ].map((method) => (
                   <button
                     key={method.id}
+                    disabled={method.disabled}
                     onClick={() => setPaymentMethod(method.id)}
-                    className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left bg-white ${
-                      paymentMethod === method.id 
-                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]' 
-                      : 'border-slate-100 hover:border-slate-200'
-                    }`}
+                    className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left bg-white ${paymentMethod === method.id
+                        ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]'
+                        : 'border-slate-100 hover:border-slate-200'
+                      } ${method.disabled ? 'opacity-60 cursor-not-allowed bg-slate-50' : ''}`}
                   >
                     <div className={`${method.color} w-10 h-10 rounded-lg flex items-center justify-center text-white font-black text-lg shadow-sm`}>
                       {method.icon}
@@ -174,8 +283,8 @@ export default function BookingPayment() {
             <div className="flex flex-wrap gap-4 pt-4">
               {[
                 { label: 'VERIFIED AGENT', icon: 'verified' },
-                { label: 'SECURE TRANSACTION', icon: 'shield_lock' },
-                { label: 'REFUND PROTECTION', icon: 'security' }
+                { label: 'DEV ENVIRONMENT', icon: 'code' },
+                { label: 'TEST TRANSACTION', icon: 'science' }
               ].map((badge, idx) => (
                 <div key={idx} className="flex items-center gap-2 bg-[#F1F5F9]/50 border border-slate-200 px-4 py-2 rounded-full">
                   <span className="material-symbols-outlined text-[18px] text-[#0040A1]">{badge.icon}</span>
@@ -189,7 +298,7 @@ export default function BookingPayment() {
           <div className="lg:col-span-12 xl:col-span-4 lg:sticky lg:top-32">
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.04)]">
               <h2 className="text-2xl font-black text-slate-900 mb-8 tracking-tight">Order Summary</h2>
-              
+
               <div className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 mb-10">
                 <div className="w-16 h-16 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
                   <img src={room.images?.[0]} alt={room.title} className="w-full h-full object-cover" />
@@ -203,7 +312,7 @@ export default function BookingPayment() {
 
               <div className="space-y-4 mb-10">
                 <div className="flex justify-between items-center text-sm font-bold text-slate-500">
-                  <span>Agent Service Fee</span>
+                  <span>Room Rental Price</span>
                   <span className="text-slate-900">Rs. {serviceFee.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm font-bold text-slate-500">
@@ -226,7 +335,7 @@ export default function BookingPayment() {
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={handleBooking}
                 className="w-full h-16 bg-[#0040A1] hover:bg-[#00358a] text-white rounded-2xl flex items-center justify-center gap-2 font-bold text-lg transition-all active:scale-[0.98] shadow-lg shadow-[#0040A1]/20 mb-6"
               >
@@ -236,7 +345,7 @@ export default function BookingPayment() {
 
               <div className="text-center">
                 <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
-                  By clicking "Pay & Book Room", you agree to The Urban Sanctuary's <br/>
+                  By clicking "Pay & Book Room", you agree to The Urban Sanctuary's <br />
                   <a href="#" className="underline">Terms of Service</a> and Cancellation Policy.
                 </p>
               </div>

@@ -79,13 +79,29 @@ export default function RoomDetails() {
       'Water Supply': 'water_drop',
       'Security': 'security',
       'Kitchen': 'kitchen',
-      'Furnished': 'weekend',
+      'Furnished': 'chair',
       'Balcony': 'balcony',
       'wifi': 'wifi',
       'ac_unit': 'ac_unit',
       'local_parking': 'local_parking',
       'kitchen': 'kitchen',
-      'pool': 'pool'
+      'pool': 'pool',
+      'washing_machine': 'local_laundry_service',
+      'furnished': 'chair',
+      'security': 'security',
+      'rooftop': 'deck',
+      'garden': 'yard',
+      'gym': 'fitness_center',
+      'concierge': 'room_service',
+      'shared_bathroom': 'bathroom',
+      'courtyard': 'deck',
+      'cultural': 'temple_buddhist',
+      'inverter': 'battery_charging_full',
+      'mountain_view': 'landscape',
+      'workspace': 'desk',
+      'solar_backup': 'solar_power',
+      'near_airport': 'flight_takeoff',
+      'quiet': 'volume_off'
     };
     const labelMap = {
       'wifi': 'High-Speed WiFi',
@@ -94,9 +110,22 @@ export default function RoomDetails() {
       'kitchen': 'Modern Kitchen',
       'pool': 'Swimming Pool',
       'water_drop': 'Water Supply',
-      'security': 'Security',
-      'weekend': 'Furnished',
-      'balcony': 'Balcony'
+      'security': '24/7 Security',
+      'chair': 'Fully Furnished',
+      'balcony': 'Private Balcony',
+      'local_laundry_service': 'Washing Machine',
+      'deck': 'Rooftop / Courtyard',
+      'yard': 'Private Garden',
+      'fitness_center': 'Gymnasium',
+      'room_service': 'Concierge Service',
+      'bathroom': 'Shared Bathroom',
+      'temple_buddhist': 'Cultural Heritage',
+      'battery_charging_full': 'Inverter Backup',
+      'landscape': 'Mountain View',
+      'desk': 'Workspace',
+      'solar_power': 'Solar Backup',
+      'flight_takeoff': 'Near Airport',
+      'volume_off': 'Quiet Neighborhood'
     };
     const iconKey = iconMap[key] || key;
     return {

@@ -11,7 +11,7 @@ const realRoomsData = [
   {
     title: "Spacious Modern Apartment in Lazimpat",
     description: "A beautifully renovated 2BHK apartment with modern finishes, large windows offering abundant natural light, and a stunning view of the city. Features a spacious living area, modern kitchen with appliances, and two comfortable bedrooms with attached bathrooms.",
-    pricePerMonth: 65000,
+    pricePerMonth: 16000,
     location: "Lazimpat, Kathmandu",
     type: "2 BHK",
     amenities: ["wifi", "ac_unit", "parking", "washing_machine", "balcony"],
@@ -25,7 +25,7 @@ const realRoomsData = [
   {
     title: "Cozy Studio in Thamel with Rooftop Access",
     description: "Perfect for young professionals, this cozy studio apartment in the heart of Thamel comes with full furniture, high-speed internet, and access to a shared rooftop terrace. Walking distance to cafes, restaurants, and shopping areas.",
-    pricePerMonth: 28000,
+    pricePerMonth: 8000,
     location: "Thamel, Kathmandu",
     type: "Studio",
     amenities: ["wifi", "furnished", "security", "rooftop"],
@@ -39,7 +39,7 @@ const realRoomsData = [
   {
     title: "Luxury Penthouse Suite in Naxal",
     description: "Experience premium living in this stunning penthouse featuring panoramic mountain views, premium wooden flooring, designer furniture, smart home features, and a private terrace. Includes dedicated parking and 24/7 security.",
-    pricePerMonth: 120000,
+    pricePerMonth: 30000,
     location: "Naxal, Kathmandu",
     type: "Penthouse",
     amenities: ["wifi", "ac_unit", "parking", "security", "balcony", "gym", "pool"],
@@ -53,7 +53,7 @@ const realRoomsData = [
   {
     title: "Family Home in Baneshwor with Garden",
     description: "A spacious 3BHK house perfect for families, featuring a large living room, fully equipped kitchen, three bedrooms, two bathrooms, and a beautiful private garden. Quiet residential area with easy access to schools and markets.",
-    pricePerMonth: 55000,
+    pricePerMonth: 14000,
     location: "Baneshwor, Kathmandu",
     type: "3 BHK",
     amenities: ["parking", "garden", "kitchen", "washing_machine", "balcony"],
@@ -67,7 +67,7 @@ const realRoomsData = [
   {
     title: "Modern 1BHK in Jhamsikhel Near Golf Course",
     description: "Elegant one-bedroom apartment in the upscale Jhamsikhel area, close to the Royal Golf Course. Features contemporary design, modular kitchen, air conditioning, and underground parking. Perfect for working professionals.",
-    pricePerMonth: 38000,
+    pricePerMonth: 9500,
     location: "Jhamsikhel, Kathmandu",
     type: "1 BHK",
     amenities: ["wifi", "ac_unit", "parking", "gym", "security"],
@@ -81,7 +81,7 @@ const realRoomsData = [
   {
     title: "Executive Apartment in Baluwatar",
     description: "Premium executive apartment in the diplomatic enclave of Baluwatar. This fully furnished 2BHK offers premium amenities, high-end finishes, and is perfect for expatriates and diplomats. 24/7 security and concierge service.",
-    pricePerMonth: 85000,
+    pricePerMonth: 22000,
     location: "Baluwatar, Kathmandu",
     type: "2 BHK",
     amenities: ["wifi", "ac_unit", "parking", "security", "furnished", "gym", "concierge"],
@@ -95,7 +95,7 @@ const realRoomsData = [
   {
     title: "Budget-Friendly Room in Koteshwor",
     description: "Affordable single room with basic amenities in Koteshwor. Ideal for students or young professionals on a budget. Walking distance to TU college, shopping malls, and public transportation.",
-    pricePerMonth: 12000,
+    pricePerMonth: 4000,
     location: "Koteshwor, Kathmandu",
     type: "Single Room",
     amenities: ["wifi", "shared_bathroom", "parking"],
@@ -109,7 +109,7 @@ const realRoomsData = [
   {
     title: "Heritage Style Room in Patan with Courtyard",
     description: "Unique accommodation in a traditional Newari house in Patan. Features original timber architecture, private courtyard, modern bathroom, and kitchenette. Perfect for those who appreciate cultural heritage.",
-    pricePerMonth: 32000,
+    pricePerMonth: 8500,
     location: "Patan, Kathmandu",
     type: "1 BHK",
     amenities: ["wifi", "kitchen", "courtyard", "cultural"],
@@ -123,7 +123,7 @@ const realRoomsData = [
   {
     title: "Newly Renovated Apartment in Maharajgunj",
     description: "Freshly renovated 2BHK apartment near BPKIHS hospital. Features new furniture, modern kitchen, inverter backup, and private balcony. Ideal for medical professionals and families.",
-    pricePerMonth: 42000,
+    pricePerMonth: 11000,
     location: "Maharajgunj, Kathmandu",
     type: "2 BHK",
     amenities: ["wifi", "ac_unit", "parking", "inverter", "balcony"],
@@ -137,7 +137,7 @@ const realRoomsData = [
   {
     title: "Minimalist Room in Samakhus with Mountain View",
     description: "Clean, minimalist room in Samakhus with stunning Himalayan views. Features large glass windows, modular furniture, and a productive workspace. High-speed fiber internet perfect for remote workers.",
-    pricePerMonth: 25000,
+    pricePerMonth: 6500,
     location: "Samakhus, Kathmandu",
     type: "Studio",
     amenities: ["wifi", "mountain_view", "workspace", "parking"],
@@ -151,7 +151,7 @@ const realRoomsData = [
   {
     title: "Duplex Apartment in Kupondole",
     description: "Stunning duplex apartment with two levels in Kupondole. Ground floor has living room and kitchen, upper floor has two bedrooms. Modern finishes, solar backup, and prime location near Jawalakhel.",
-    pricePerMonth: 58000,
+    pricePerMonth: 14500,
     location: "Kupondole, Kathmandu",
     type: "2 BHK",
     amenities: ["wifi", "parking", "solar_backup", "balcony"],
@@ -165,7 +165,7 @@ const realRoomsData = [
   {
     title: "Quiet Residential Room in Sinamangal",
     description: "Peaceful room in a quiet Sinamangal neighborhood. Ideal for students at nearby colleges. Basic amenities with option for meal plans. Easy access to airport and city center.",
-    pricePerMonth: 15000,
+    pricePerMonth: 5000,
     location: "Sinamangal, Kathmandu",
     type: "Single Room",
     amenities: ["wifi", "near_airport", "quiet"],

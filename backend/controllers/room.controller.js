@@ -49,6 +49,16 @@ exports.getRooms = async (req, res) => {
   }
 };
 
+// GET /api/rooms/locations (get distinct locations)
+exports.getLocations = async (req, res) => {
+  try {
+    const locations = await Room.distinct('location');
+    res.status(200).json(locations);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching locations', error: error.message });
+  }
+};
+
 // GET /api/rooms/:id  (single room by MongoDB _id)
 exports.getRoomById = async (req, res) => {
   try {

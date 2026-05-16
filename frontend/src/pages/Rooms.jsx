@@ -13,6 +13,7 @@ export default function Rooms() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRooms, setTotalRooms] = useState(0);
+  const [locations, setLocations] = useState([]);
 
   // Derive filters from URL search params
   const locationFilter = searchParams.get('location') || 'All Locations';
@@ -21,6 +22,19 @@ export default function Rooms() {
   useEffect(() => {
     fetchRooms(1); // Fetch whenever URL params change
   }, [searchParams]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/rooms/locations');
+        const data = await response.json();
+        setLocations(data);
+      } catch (error) {
+        console.error('Error fetching locations:', error);
+      }
+    };
+    fetchLocations();
+  }, []);
 
   const fetchRooms = async (page) => {
     setLoading(true);
@@ -86,11 +100,9 @@ export default function Rooms() {
                   className="appearance-none border border-slate-200 rounded-lg px-6 py-3 text-sm font-bold text-slate-700 bg-white shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer pr-10"
                 >
                   <option>All Locations</option>
-                  <option>Baneshwor</option>
-                  <option>Naxal</option>
-                  <option>Lazimpat</option>
-                  <option>Jhamsikhel</option>
-                  <option>Baluwatar</option>
+                  {locations.map((loc, idx) => (
+                    <option key={idx} value={loc}>{loc}</option>
+                  ))}
                 </select>
                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
               </div>

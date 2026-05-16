@@ -51,10 +51,10 @@ function MessageText({ content }) {
 function formatTime(timestamp) {
   if (!timestamp) return '';
   const date = new Date(timestamp);
-  return date.toLocaleTimeString('en-US', { 
-    hour: 'numeric', 
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
     minute: '2-digit',
-    hour12: true 
+    hour12: true
   });
 }
 

@@ -109,7 +109,7 @@ export default function ChatBot() {
 
     try {
       const response = await chatbotService.sendMessage(message);
-      
+
       const botMsg = {
         role: 'model',
         content: response.reply || 'I couldn\'t process that. Please try again.',
@@ -155,7 +155,7 @@ export default function ChatBot() {
         id="chatbot-fab"
       >
         {!isOpen && <span className="chatbot-fab-pulse" />}
-        <MessageCircle className="fab-chat-icon" size={28} />
+        <img src={sanctuaryLogo} alt="AI Chat" className="fab-chat-icon" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
         <X className="fab-close-icon" size={28} />
       </button>
 
