@@ -19,6 +19,7 @@ import AgentSignUp from './pages/AgentSignUp';
 import LoginEntry from './pages/LoginEntry';
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import FloatingChatbot from './components/chatbot/FloatingChatbot';
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
             </ProtectedRoute>
           } />
         </Routes>
+        <FloatingChatbot />
       </Router>
     </AuthProvider>
   );

@@ -4,18 +4,20 @@ require('dotenv').config();
 
 const createSuperAdmin = async () => {
   try {
-    // Connect to database
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI not found in .env");
+    }
+
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to database');
 
-    // Check if super admin already exists
     const existingSuperAdmin = await User.findOne({ role: 'superadmin' });
+
     if (existingSuperAdmin) {
       console.log('Super admin already exists:', existingSuperAdmin.email);
       return;
     }
 
-    // Create super admin
     const superAdmin = await User.create({
       fullName: 'Super Admin',
       email: 'admin@urban.com',
@@ -31,7 +33,7 @@ const createSuperAdmin = async () => {
     console.log('Role:', superAdmin.role);
 
   } catch (error) {
-    console.error('Error creating super admin:', error);
+    console.error('Error creating super admin:', error.message);
   } finally {
     await mongoose.disconnect();
   }
