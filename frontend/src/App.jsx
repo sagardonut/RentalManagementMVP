@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import ChatBot from './components/chatbot/ChatBot';
 
 import Home from './pages/Home';
 import Rooms from './pages/Rooms';
@@ -68,6 +69,7 @@ function App() {
           } />
         </Routes>
       </Router>
+      <ChatBot />
     </AuthProvider>
   );
 }

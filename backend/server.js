@@ -112,6 +112,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/agencies', agencyRoutes);
 app.use('/api/admin/rooms', adminRoomRoutes);
 app.use('/api/users', require('./routes/user.routes.js'));
+app.use('/api/chatbot', require('./routes/chatbot.routes.js'));
 
 // Base route
 app.get('/', (req, res) => {
