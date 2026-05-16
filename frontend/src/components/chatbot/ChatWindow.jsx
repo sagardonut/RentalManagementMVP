@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Bot, UserRound } from 'lucide-react';
+import { RobotIcon } from './ChatBot';
 
 function renderInline(text) {
   const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).filter(Boolean);
@@ -76,7 +77,7 @@ export default function ChatWindow({ messages, isTyping }) {
           <div className="chatbot-empty-spacer" />
           <div className="chatbot-welcome">
             <div className="welcome-icon">
-              <Bot size={28} />
+              <RobotIcon size={28} className="welcome-robot-icon" />
             </div>
             <h4>Namaste. I'm Sanctuary AI.</h4>
             <p>

@@ -4,8 +4,28 @@ import { useAuth } from '../../context/AuthContext';
 import ChatWindow from './ChatWindow';
 import ChatInput from './ChatInput';
 import * as chatbotService from '../../services/chatbotService';
-import sanctuaryLogo from '../../assets/sanctuary-ai-logo.svg';
 import './ChatBot.css';
+
+// ─── Robot Icon SVG ─────────────────────────────────────────────
+export function RobotIcon({ size = 34, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect x="4" y="4" width="16" height="16" rx="3" fill="#0f766e" />
+      <rect x="6" y="6" width="12" height="10" rx="2" fill="#115e59" />
+      <rect x="8" y="8" width="8" height="4" rx="1" fill="#ffffff" />
+      <circle cx="10" cy="10" r="1" fill="#22c55e" />
+      <circle cx="14" cy="10" r="1" fill="#22c55e" />
+      <rect x="7" y="14" width="10" height="2" rx="1" fill="#5eead4" />
+    </svg>
+  );
+}
 
 // ─── Role Badge ──────────────────────────────────────────────
 function RoleBadge({ role }) {
@@ -147,6 +167,15 @@ export default function ChatBot() {
 
   return (
     <>
+      {/* Animated Ring Around Chatbot */}
+      {!isOpen && (
+        <div className="chatbot-ring-container">
+          <div className="chatbot-ring" />
+          <div className="chatbot-ring" style={{ animationDelay: '0.5s' }} />
+          <div className="chatbot-ring" style={{ animationDelay: '1s' }} />
+        </div>
+      )}
+
       {/* Floating Action Button */}
       <button
         className={`chatbot-fab ${isOpen ? 'is-open' : ''}`}
@@ -155,7 +184,9 @@ export default function ChatBot() {
         id="chatbot-fab"
       >
         {!isOpen && <span className="chatbot-fab-pulse" />}
-        <img src={sanctuaryLogo} alt="AI Chat" className="fab-chat-icon" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+        <div className="fab-chat-icon">
+          <RobotIcon size={32} />
+        </div>
         <X className="fab-close-icon" size={28} />
       </button>
 
@@ -166,7 +197,7 @@ export default function ChatBot() {
           <div className="chatbot-header">
             <div className="chatbot-header-left">
               <div className="chatbot-avatar">
-                <img src={sanctuaryLogo} alt="" />
+                <RobotIcon size={28} />
                 <div className="chatbot-avatar-pulse" />
               </div>
               <div className="chatbot-header-info">

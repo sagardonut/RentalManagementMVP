@@ -43,7 +43,7 @@ export default function BookingPayment() {
     }
 
     const config = {
-      publicKey: "test_public_key_dc74e0fd57cb46cd93832aee0a390234",
+      publicKey: "8ae3f10dddac43b2930df304142d2e49",
       productIdentity: roomId,
       productName: room?.title || "Room Booking",
       productUrl: window.location.href,
@@ -231,8 +231,8 @@ export default function BookingPayment() {
                     key={item.id}
                     onClick={() => setSelectedRooms(item.id)}
                     className={`flex flex-col items-start p-6 rounded-xl border-2 transition-all duration-200 text-left bg-white ${selectedRooms === item.id
-                        ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]'
-                        : 'border-slate-100 hover:border-slate-200'
+                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]'
+                      : 'border-slate-100 hover:border-slate-200'
                       }`}
                   >
                     <span className="material-symbols-outlined text-[#0040A1] mb-4 text-xl">bed</span>
@@ -263,8 +263,8 @@ export default function BookingPayment() {
                     disabled={method.disabled}
                     onClick={() => setPaymentMethod(method.id)}
                     className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left bg-white ${paymentMethod === method.id
-                        ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]'
-                        : 'border-slate-100 hover:border-slate-200'
+                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]'
+                      : 'border-slate-100 hover:border-slate-200'
                       } ${method.disabled ? 'opacity-60 cursor-not-allowed bg-slate-50' : ''}`}
                   >
                     <div className={`${method.color} w-10 h-10 rounded-lg flex items-center justify-center text-white font-black text-lg shadow-sm`}>
