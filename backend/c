@@ -1,4 +1,0 @@
-MONGO_URI=mongodb+srv://admin:MyPassword123@cluster0.vasfl1i.mongodb.net/?appName=Cluster0
-PORT=5000
-# Groq API
-GROQ_API_KEY=your_groq_api_key_here

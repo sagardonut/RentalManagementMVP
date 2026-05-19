@@ -6,6 +6,7 @@ export default function AgentSignIn() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
@@ -23,7 +24,7 @@ export default function AgentSignIn() {
     if (result.success) {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       const role = storedUser?.role;
-      
+
       if (role === 'agent') {
         navigate('/agent/dashboard');
       } else {
@@ -79,13 +80,22 @@ export default function AgentSignIn() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[0.7rem] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 transition-colors">Password</label>
-                  <input
-                    name="password" type="password" required
-                    value={formData.password} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-900 dark:text-slate-100 font-medium transition-all"
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                  />
+                  <div className="relative">
+                    <input
+                      name="password" type={showPassword ? 'text' : 'password'} required
+                      value={formData.password} onChange={handleChange}
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-900 dark:text-slate-100 font-medium transition-all pr-12"
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit" disabled={loading}
@@ -93,11 +103,24 @@ export default function AgentSignIn() {
                 >
                   {loading ? 'Signing In...' : 'Sign In to Dashboard'}
                 </button>
+
+                <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Test Credentials</p>
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Email: <span className="font-bold text-blue-600 dark:text-blue-400">agent@test.com</span>
+                  </p>
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Password: <span className="font-bold text-blue-600 dark:text-blue-400">password123</span>
+                  </p>
+                </div>
               </form>
 
               <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-6 transition-colors">
                 New agent?{' '}
                 <Link to="/agent/signup" className="text-primary font-bold hover:underline">Create Account</Link>
+              </p>
+              <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-4 transition-colors">
+                By signing in, you agree to our <Link to="/terms-conditions" className="text-blue-600 dark:text-blue-400 hover:underline font-bold">Terms and Conditions</Link> & <Link to="/privacy-policy" className="text-blue-600 dark:text-blue-400 hover:underline font-bold">Privacy Policy</Link>.
               </p>
             </div>
           </div>

@@ -9,10 +9,12 @@ const ROOMS_PER_PAGE = 9; // 3 rows of 3 columns
 export default function Rooms() {
   const [searchParams] = useSearchParams();
   const [rooms, setRooms] = useState([]);
+  const [recentRooms, setRecentRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     location: 'All Locations',
-    priceRange: 'Price Range'
+    priceRange: 'Price Range',
+    sort: 'Default'
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -49,6 +51,9 @@ export default function Rooms() {
         const [min, max] = filters.priceRange.split('-');
         if (min) url += `minPrice=${min}&`;
         if (max) url += `maxPrice=${max}&`;
+      }
+      if (filters.sort === 'Recently Added') {
+        url += `sortBy=recent&`;
       }
 
       const response = await fetch(url);
@@ -120,6 +125,18 @@ export default function Rooms() {
                   ))}
                 </select>
                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
+              </div>
+
+              <div className="relative">
+                <select
+                  value={filters.sort}
+                  onChange={(e) => handleFilterChange('sort', e.target.value)}
+                  className="appearance-none border border-slate-200 dark:border-slate-700 rounded-lg px-6 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer pr-10"
+                >
+                  <option value="Default">Sort By: Price</option>
+                  <option value="Recently Added">Recently Added</option>
+                </select>
+                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">sort</span>
               </div>
             </div>
           </div>
@@ -203,7 +220,7 @@ export default function Rooms() {
               <h3 className="text-2xl font-bold text-slate-400">Not available</h3>
               <p className="text-slate-500 dark:text-slate-500 mt-2">No properties match your selected criteria.</p>
               <button
-                onClick={() => setFilters({ location: 'All Locations', priceRange: 'Price Range' })}
+                onClick={() => setFilters({ location: 'All Locations', priceRange: 'Price Range', sort: 'Default' })}
                 className="mt-4 text-blue-600 font-bold hover:underline"
               >
                 Clear all filters

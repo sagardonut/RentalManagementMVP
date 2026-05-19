@@ -10,7 +10,8 @@ export default function SignIn() {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [showPassword, setShowPassword] = useState(false);
+
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,7 +76,7 @@ export default function SignIn() {
       <main className="flex-grow flex items-center justify-center p-6">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-2">
-            <h1 className="text-4xl font-extrabold tracking-tight">Welcome back.</h1>
+            <h1 className="text-4xl font-extrabold tracking-tight">{expectedRole === 'agency' ? 'Agency Login' : 'Member Login'}</h1>
             <p className="text-on-surface dark:text-slate-400">Enter your credentials to access your sanctuary dashboard.</p>
           </div>
 
@@ -89,45 +90,64 @@ export default function SignIn() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-on-surface dark:text-slate-400 ml-1">Email Address</label>
-                <input 
+                <input
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100" 
-                  placeholder="name@company.com" 
+                  className="w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100"
+                  placeholder="name@company.com"
                   type="email"
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-on-surface dark:text-slate-400 ml-1">Password</label>
-                <input 
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100" 
-                  placeholder="••••••••" 
-                  type="password"
-                  autoComplete="current-password"
-                />
+                <div className="relative">
+                  <input
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100 pr-12"
+                    placeholder="••••••••"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                  </button>
+                </div>
               </div>
 
-              <button 
+              <button
                 type="submit"
                 disabled={isLoading}
                 className="w-full bg-primary dark:bg-blue-600 hover:bg-primary-container dark:hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 dark:shadow-blue-600/20 transition-all active:scale-[0.98] disabled:opacity-50"
               >
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </button>
+
+              <div className="mt-4 p-4 bg-surface dark:bg-slate-800 rounded-xl border border-outline-variant/20 dark:border-slate-700 text-center">
+                <p className="text-xs font-bold text-on-surface dark:text-slate-400 uppercase tracking-widest mb-1">Test Credentials</p>
+                <p className="text-sm font-medium text-on-surface dark:text-slate-300">
+                  Email: <span className="font-bold text-primary dark:text-blue-400">{expectedRole === 'agency' ? 'agency@test.com' : 'member@test.com'}</span>
+                </p>
+                <p className="text-sm font-medium text-on-surface dark:text-slate-300">
+                  Password: <span className="font-bold text-primary dark:text-blue-400">password123</span>
+                </p>
+              </div>
             </form>
           </div>
 
           <p className="text-center text-xs text-on-surface dark:text-slate-400 uppercase tracking-widest">
             New to Urban Sanctuary? <Link to="/signup" className="text-primary dark:text-blue-400 underline font-bold">Create an account</Link>
           </p>
-          <p className="text-center text-xs text-on-surface dark:text-slate-400 uppercase tracking-widest mt-2">
-            By signing in, you agree to our <Link to="#" className="text-primary dark:text-blue-400 underline">Terms</Link> & <Link to="#" className="text-primary dark:text-blue-400 underline">Privacy</Link>.
+          <p className="text-center text-xs text-on-surface dark:text-slate-400 uppercase tracking-widest mt-4">
+            By signing in, you agree to our <Link to="/terms-conditions" className="text-primary dark:text-blue-400 underline font-bold">Terms and Conditions</Link> & <Link to="/privacy-policy" className="text-primary dark:text-blue-400 underline font-bold">Privacy Policy</Link>.
           </p>
         </div>
       </main>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import PendingRoomsManagement from "../components/admin/PendingRoomsManagement";
+import RoomCRUDModal from "../components/admin/RoomCRUDModal";
 
 const API = "http://localhost:5001/api";
 
@@ -73,6 +75,7 @@ export default function AgencyDashboard() {
   const [roomSearch, setRoomSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [showAgentModal, setShowAgentModal] = useState(false);
+  const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [agentForm, setAgentForm] = useState({
     fullName: "",
     email: "",
@@ -81,6 +84,7 @@ export default function AgencyDashboard() {
     specialization: "",
   });
   const [editingAgent, setEditingAgent] = useState(null);
+  const [editingRoom, setEditingRoom] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState(null);
@@ -98,6 +102,8 @@ export default function AgencyDashboard() {
       3000,
     );
   };
+  
+  const showToast = triggerToast;
 
   useEffect(() => {
     fetchAll();
@@ -106,7 +112,6 @@ export default function AgencyDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      // Set default data immediately to prevent blank page
       setStats({ totalAgents: 0, totalRooms: 0, activeListings: 0 });
       setAgents([]);
       setRooms([]);
@@ -122,7 +127,6 @@ export default function AgencyDashboard() {
           },
         };
 
-        // Simple fetch without complex dependencies
         try {
           const [statsRes, agentsRes, roomsRes] = await Promise.all([
             fetch(`${API}/users/stats`, config).catch(() => null),
@@ -156,6 +160,8 @@ export default function AgencyDashboard() {
       setLoading(false);
     }
   };
+  
+  const fetchData = fetchAll;
 
   const handleLogout = () => {
     logout();
@@ -197,7 +203,7 @@ export default function AgencyDashboard() {
           specialization: "",
         });
         triggerToast("Agent created successfully");
-        fetchAll(); // Background refresh
+        fetchAll();
       } else {
         const error = await response.json();
         triggerToast(error.message || "Failed to create agent", "error");
@@ -331,6 +337,37 @@ export default function AgencyDashboard() {
       triggerToast("Failed to update agent status. Please try again.", "error");
     }
   };
+  
+  const handleEditRoom = (room) => {
+    setEditingRoom(room);
+    setIsRoomModalOpen(true);
+  };
+
+  const handleCreateRoom = () => {
+    setEditingRoom(null);
+    setIsRoomModalOpen(true);
+  };
+
+  const handleDeleteRoom = async (roomId) => {
+    if (!window.confirm("Are you sure you want to delete this room? This action cannot be undone.")) return;
+    try {
+      const stored = localStorage.getItem("user");
+      const token = stored ? JSON.parse(stored).token : null;
+      const res = await fetch(`${API}/rooms/${roomId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        showToast("Room deleted successfully");
+        fetchData();
+      } else {
+        showToast("Failed to delete room", "error");
+      }
+    } catch (e) {
+      console.error(e);
+      showToast("An error occurred", "error");
+    }
+  };
 
   const filteredRooms = rooms.filter(
     (r) =>
@@ -350,6 +387,7 @@ export default function AgencyDashboard() {
     { id: "dashboard", icon: "dashboard", label: "Dashboard" },
     { id: "agents", icon: "group", label: "Agents Management" },
     { id: "rooms", icon: "home_work", label: "Rooms Overview" },
+    { id: "pending_rooms", icon: "pending_actions", label: "Pending Rooms" },
     { id: "profile", icon: "person", label: "Profile" },
   ];
 
@@ -566,10 +604,8 @@ export default function AgencyDashboard() {
               getInitials={getInitials}
               onEdit={openEditModal}
               onDelete={(agent) => {
-                console.log("onDelete handler called with agent:", agent);
                 setAgentToDelete(agent);
                 setShowDeleteModal(true);
-                console.log("Setting showDeleteModal to true");
               }}
               onToggleStatus={handleToggleAgentStatus}
             />
@@ -601,8 +637,8 @@ export default function AgencyDashboard() {
                     onChange={(e) => setRoomSearch(e.target.value)}
                   />
                 </div>
-                <button className="p-2 bg-surface dark:bg-slate-800 rounded-full shadow-sm text-on-surface dark:text-slate-400 hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined">filter_list</span>
+                <button onClick={handleCreateRoom} className="px-5 py-2 bg-primary text-on-primary rounded-full font-bold text-sm hover:shadow-lg transition-all flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm">add</span> Add Room
                 </button>
               </div>
             </div>
@@ -610,7 +646,16 @@ export default function AgencyDashboard() {
               rooms={filteredRooms}
               loading={loading}
               getInitials={getInitials}
+              onEdit={handleEditRoom}
+              onDelete={handleDeleteRoom}
             />
+          </section>
+        )}
+
+        {/* ─── PENDING ROOMS TAB ─── */}
+        {!loading && activeTab === "pending_rooms" && (
+          <section>
+            <PendingRoomsManagement />
           </section>
         )}
 
@@ -882,36 +927,45 @@ export default function AgencyDashboard() {
       )}
 
       {/* Delete Agent Confirmation Modal */}
-      {console.log("Checking modal render:", showDeleteModal, agentToDelete) ||
-        (showDeleteModal && agentToDelete && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md mx-4">
-              <h3 className="text-xl font-bold mb-2">Delete Agent</h3>
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to delete agent{" "}
-                <strong>{agentToDelete.fullName}</strong>? This action cannot be
-                undone.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    console.log("Modal delete button clicked");
-                    handleDeleteAgent();
-                  }}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Delete Agent
-                </button>
-              </div>
+      {showDeleteModal && agentToDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md mx-4">
+            <h3 className="text-xl font-bold mb-2">Delete Agent</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete agent{" "}
+              <strong>{agentToDelete.fullName}</strong>? This action cannot be
+              undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAgent}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Agent
+              </button>
             </div>
           </div>
-        ))}
+        </div>
+      )}
+      
+      {/* Room CRUD Modal */}
+      {isRoomModalOpen && (
+        <RoomCRUDModal
+          room={editingRoom}
+          onClose={() => setIsRoomModalOpen(false)}
+          onSuccess={() => {
+            setIsRoomModalOpen(false);
+            showToast(editingRoom ? "Room updated successfully" : "Room created successfully");
+            fetchData();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -1029,10 +1083,7 @@ function AgentTable({
                       </span>
                     </button>
                     <button
-                      onClick={() => {
-                        console.log("Delete button clicked for agent:", agent);
-                        onDelete(agent);
-                      }}
+                      onClick={() => onDelete(agent)}
                       className="p-2 text-on-surface dark:text-slate-400 hover:text-error transition-colors rounded-lg"
                     >
                       <span className="material-symbols-outlined text-xl">
@@ -1054,7 +1105,7 @@ function AgentTable({
 }
 
 /* ─── Shared Room Grid ─── */
-function RoomGrid({ rooms, loading, getInitials }) {
+function RoomGrid({ rooms, loading, getInitials, onEdit, onDelete }) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -1132,15 +1183,25 @@ function RoomGrid({ rooms, loading, getInitials }) {
                     {agentName}
                   </span>
                 </div>
-                <span
-                  className={`px-2 py-0.5 rounded text-[0.6rem] font-bold uppercase ${
-                    isVerified
-                      ? "bg-primary/10 text-primary"
-                      : "bg-tertiary/10 text-tertiary"
-                  }`}
-                >
-                  {isVerified ? "Verified" : "Available"}
-                </span>
+                <div className="flex gap-2">
+                  <span
+                    className={`px-2 py-0.5 rounded text-[0.6rem] font-bold uppercase ${
+                      isVerified
+                        ? "bg-primary/10 text-primary"
+                        : "bg-tertiary/10 text-tertiary"
+                    }`}
+                  >
+                    {isVerified ? "Verified" : "Available"}
+                  </span>
+                  <div className="flex gap-1 ml-2 border-l border-outline-variant/30 pl-2">
+                    <button onClick={() => onEdit(room)} className="text-on-surface dark:text-slate-400 hover:text-primary transition-colors" title="Edit Room">
+                      <span className="material-symbols-outlined text-sm">edit</span>
+                    </button>
+                    <button onClick={() => onDelete(room._id)} className="text-on-surface dark:text-slate-400 hover:text-error transition-colors" title="Delete Room">
+                      <span className="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

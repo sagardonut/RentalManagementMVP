@@ -30,12 +30,17 @@ exports.getRooms = async (req, res) => {
     const total = await Room.countDocuments(query);
     console.log("STEP 4: after countDocuments");
 
+    let sortOption = { pricePerMonth: 1 };
+    if (req.query.sortBy === 'recent') {
+      sortOption = { createdAt: -1 };
+    }
+
     console.log("STEP 5: before Room.find");
     const rooms = await Room.find(query)
       .populate('agentId', 'fullName avatar email')
       .skip(skip)
       .limit(limitNum)
-      .sort({ pricePerMonth: 1 });
+      .sort(sortOption);
     console.log("STEP 6: after Room.find");
 
     console.log("STEP 7: before response");
@@ -50,35 +55,14 @@ exports.getRooms = async (req, res) => {
 // GET /api/rooms/price-ranges (dynamic price buckets)
 exports.getPriceRanges = async (req, res) => {
   try {
-    const maxRoom = await Room.findOne().sort({ pricePerMonth: -1 });
-    
-    if (!maxRoom) {
-      return res.status(200).json([]);
-    }
-    
-    const maxPrice = maxRoom.pricePerMonth;
-    const ranges = [];
-    let currentMin = 0;
-    const step = 5000;
-    
-    while (currentMin < maxPrice) {
-      let currentMax = currentMin + step;
-      if (currentMax > maxPrice) {
-        currentMax = maxPrice;
-      }
-      ranges.push({
-        value: `${currentMin}-${currentMax}`,
-        label: `NPR ${currentMin} - ${currentMax}`
-      });
-      currentMin = currentMax;
-      if (currentMin === maxPrice) break;
-    }
-    
-    ranges.push({
-      value: `${maxPrice}-`,
-      label: `Above NPR ${maxPrice}`
-    });
-    
+    const ranges = [
+      { value: '0-15000', label: 'Under NPR 15,000' },
+      { value: '15000-25000', label: 'NPR 15,000 - 25,000' },
+      { value: '25000-40000', label: 'NPR 25,000 - 40,000' },
+      { value: '40000-75000', label: 'NPR 40,000 - 75,000' },
+      { value: '75000-150000', label: 'NPR 75,000 - 150,000' },
+      { value: '150000-', label: 'Above NPR 150,000' }
+    ];
     res.status(200).json(ranges);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching price ranges', error: error.message });
@@ -135,7 +119,7 @@ exports.updateRoom = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Not authorized, user data missing' });
     }
-    if (room.agentId.toString() !== req.user._id.toString() && req.user.role !== 'superadmin') {
+    if (room.agentId.toString() !== req.user._id.toString() && req.user.role !== 'superadmin' && req.user.role !== 'agency') {
       return res.status(403).json({ message: 'Not authorized to edit this room' });
     }
     const { title, description, pricePerMonth, location, type, amenities, images, isVerified, isAvailable } = req.body;
@@ -205,15 +189,8 @@ exports.getPendingRooms = async (req, res) => {
     
     let query = { status: 'pending' };
     
-    if (req.user.role === 'agency') {
-      // Find all agents belonging to this agency
-      const User = require('../models/User.model');
-      const agents = await User.find({ agencyId: req.user._id }, '_id');
-      const agentIds = agents.map(a => a._id);
-      agentIds.push(req.user._id); // Include the agency itself
-      
-      query.agentId = { $in: agentIds };
-    }
+    // Global view for agency as requested
+    // No agentId filtering applied here
     
     const rooms = await Room.find(query).populate('agentId', 'fullName email avatar');
     res.status(200).json({ rooms });
@@ -230,14 +207,9 @@ exports.getAllAdminRooms = async (req, res) => {
     }
     
     let query = {};
-    if (req.user.role === 'agency') {
-      const User = require('../models/User.model');
-      const agents = await User.find({ agencyId: req.user._id }, '_id');
-      const agentIds = agents.map(a => a._id);
-      agentIds.push(req.user._id); // Include the agency itself
-      
-      query.agentId = { $in: agentIds };
-    }
+    
+    // Global view for agency as requested
+    // No agentId filtering applied here
     
     const rooms = await Room.find(query)
       .populate('agentId', 'fullName email avatar')
@@ -265,11 +237,8 @@ exports.updateRoomStatus = async (req, res) => {
     if (!room) return res.status(404).json({ message: 'Room not found' });
     
     if (req.user.role === 'agency') {
-      const User = require('../models/User.model');
-      const agent = await User.findById(room.agentId);
-      if (!agent || agent.agencyId?.toString() !== req.user._id.toString()) {
-        return res.status(403).json({ message: 'Not authorized to approve this room' });
-      }
+      // Global view: Agency can approve any room
+      // No agencyId validation required
     }
     
     room.status = status;
