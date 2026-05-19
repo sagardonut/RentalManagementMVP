@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  body { 
-    @apply bg-surface text-on-surface;
+  html, body { 
+    @apply min-h-screen w-full bg-surface dark:bg-slate-900 text-on-surface dark:text-slate-100 transition-colors duration-300;
     font-family: 'Inter', sans-serif; 
+  }
+  
+  *, *::before, *::after {
+    @apply transition-colors duration-300 ease-in-out;
   }
 }
 

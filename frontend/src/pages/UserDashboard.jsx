@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AgentCard from '../components/common/AgentCard';
 import RoomCard from '../components/common/RoomCard';
@@ -99,7 +99,7 @@ export default function UserDashboard() {
       {/* SideNavBar */}
       <aside className="h-screen w-64 fixed left-0 top-0 z-40 flex flex-col border-r border-slate-200 dark:border-slate-800 p-4 gap-2 bg-slate-50 dark:bg-slate-950">
         <div className="mb-8 px-4">
-          <h1 className="text-lg font-black text-blue-800 dark:text-blue-300 tracking-tighter">The Urban Sanctuary</h1>
+          <Link to="/" className="text-lg font-black text-blue-800 dark:text-blue-300 tracking-tighter hover:opacity-80 transition-opacity">The Urban Sanctuary</Link>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Property Management</p>
         </div>
         <nav className="flex-1 flex flex-col gap-1">
@@ -147,9 +147,6 @@ export default function UserDashboard() {
             {activeTab === 'bookings' ? 'My Bookings' : activeTab === 'agents' ? 'Elite Himalayan Living - Agents' : 'Premium Property Listings'}
           </h2>
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-800 rounded-full transition-colors active:scale-95">
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
             <UserProfileDropdown />
           </div>
         </header>

@@ -32,6 +32,19 @@ const RoomSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false,
+  },
+  type: {
+    type: String,
+    default: 'single',
+  },
+  isAvailable: {
+    type: Boolean,
+    default: true,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
   }
 }, { timestamps: true });
 

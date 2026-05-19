@@ -18,11 +18,13 @@ const RoomManagement = ({
                          (room.description && room.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
                          (room.location && room.location.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesType = filterType === 'all' || room.type === filterType;
+    const actualType = room.type || 'single';
+    const matchesType = filterType === 'all' || actualType === filterType;
     
+    const actualAvailability = room.isAvailable !== undefined ? room.isAvailable : true;
     const matchesAvailability = filterAvailability === 'all' || 
-                               (filterAvailability === 'available' && room.isAvailable) ||
-                               (filterAvailability === 'unavailable' && !room.isAvailable);
+                               (filterAvailability === 'available' && actualAvailability) ||
+                               (filterAvailability === 'unavailable' && !actualAvailability);
     
     return matchesSearch && matchesType && matchesAvailability;
   });
@@ -187,8 +189,8 @@ const RoomManagement = ({
                       
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <p className="text-2xl font-bold text-primary">{formatPrice(room.price)}</p>
-                          <p className="text-xs text-on-surface dark:text-slate-400">per night</p>
+                          <p className="text-2xl font-bold text-primary">{formatPrice(room.pricePerMonth)}</p>
+                          <p className="text-xs text-on-surface dark:text-slate-400">per month</p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                           room.isAvailable 

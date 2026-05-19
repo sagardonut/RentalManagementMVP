@@ -17,8 +17,7 @@ export default function UserProfileDropdown() {
     switch (user?.role) {
       case 'user': return '/user/dashboard';
       case 'agent': return '/agent/dashboard';
-      case 'agency': return '/admin/agency';
-      case 'superadmin': return '/admin/super';
+      case 'agency': return '/agency/dashboard';
       default: return '/';
     }
   };

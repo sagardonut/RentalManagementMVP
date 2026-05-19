@@ -19,15 +19,13 @@ export default function AgentSignIn() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const result = await login(formData.email, formData.password);
+    const result = await login(formData.email, formData.password, 'agent');
     if (result.success) {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       const role = storedUser?.role;
       
       if (role === 'agent') {
         navigate('/agent/dashboard');
-      } else if (role === 'agency') {
-        navigate('/admin/agency');
       } else {
         navigate('/');
       }
@@ -38,12 +36,12 @@ export default function AgentSignIn() {
   };
 
   return (
-    <div className="bg-surface dark:bg-slate-900 min-h-screen flex flex-col" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="bg-slate-50 dark:bg-slate-900 min-h-screen flex flex-col transition-colors" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-surface dark:bg-slate-800/80 backdrop-blur-lg border-b border-outline-variant/20 shadow-sm">
+      <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-outline-variant/20 shadow-sm transition-colors">
         <div className="flex justify-between items-center h-16 px-6 md:px-12 max-w-screen-xl mx-auto">
           <Link to="/" className="text-lg font-bold tracking-tight text-primary">The Urban Sanctuary</Link>
-          <div className="flex items-center gap-4 text-sm font-medium text-on-surface dark:text-slate-400">
+          <div className="flex items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors">
             <span>Are you an Agency?</span>
             <Link to="/signup" className="text-primary font-bold hover:underline">Agency Sign Up</Link>
           </div>
@@ -53,7 +51,7 @@ export default function AgentSignIn() {
       <main className="flex-1 flex items-center justify-center pt-20 pb-12 px-4">
         <div className="w-full max-w-md space-y-8">
           {/* Card */}
-          <div className="bg-surface dark:bg-slate-800 rounded-2xl shadow-[0_24px_64px_rgba(0,64,161,0.08)] border border-outline-variant/20 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-[0_24px_64px_rgba(0,64,161,0.08)] border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
             {/* Top Banner */}
             <div className="bg-primary px-8 pt-8 pb-6">
               <p className="text-on-primary/60 text-[0.65rem] font-black uppercase tracking-[0.2em] mb-1">Agent Portal</p>
@@ -71,33 +69,33 @@ export default function AgentSignIn() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-1.5">
-                  <label className="text-[0.7rem] font-black uppercase tracking-widest text-on-surface dark:text-slate-400">Email Address</label>
+                  <label className="text-[0.7rem] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 transition-colors">Email Address</label>
                   <input
                     name="email" type="email" required
                     value={formData.email} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-surface dark:bg-slate-800 border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-100 font-medium transition-all"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-900 dark:text-slate-100 font-medium transition-all"
                     placeholder="agent@urbansanctuary.com"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[0.7rem] font-black uppercase tracking-widest text-on-surface dark:text-slate-400">Password</label>
+                  <label className="text-[0.7rem] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 transition-colors">Password</label>
                   <input
                     name="password" type="password" required
                     value={formData.password} onChange={handleChange}
-                    className="w-full px-4 py-3 bg-surface dark:bg-slate-800 border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-100 font-medium transition-all"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-900 dark:text-slate-100 font-medium transition-all"
                     placeholder="••••••••"
                     autoComplete="current-password"
                   />
                 </div>
                 <button
                   type="submit" disabled={loading}
-                  className="w-full bg-primary text-on-primary py-4 rounded-xl font-bold text-base shadow-[0_8px_24px_rgba(0,64,161,0.2)] hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 mt-2"
+                  className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-base shadow-[0_8px_24px_rgba(0,64,161,0.2)] hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 mt-2"
                 >
                   {loading ? 'Signing In...' : 'Sign In to Dashboard'}
                 </button>
               </form>
 
-              <p className="text-center text-sm text-on-surface dark:text-slate-400 mt-6">
+              <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-6 transition-colors">
                 New agent?{' '}
                 <Link to="/agent/signup" className="text-primary font-bold hover:underline">Create Account</Link>
               </p>

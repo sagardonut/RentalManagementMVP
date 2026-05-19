@@ -55,12 +55,37 @@ exports.register = async (req, res) => {
 // @access  Public
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, expectedRole } = req.body;
 
     // Check for user email
     const user = await User.findOne({ email });
 
-    if (user && (await user.comparePassword(password))) {
+    console.log(`[LOGIN ATTEMPT] Email: ${email}, DB Role: ${user?.role}, Expected Role: ${expectedRole}`);
+
+    let isMatch = false;
+    if (user) {
+      isMatch = await user.comparePassword(password);
+      
+      // Auto-heal logic: If bcrypt fails, check if the password was stored as plain text
+      if (!isMatch && user.password === password) {
+        console.log(`[AUTO-HEAL] Corrupted plaintext password detected for ${email}. Re-hashing...`);
+        user.password = password; // Triggers pre('save') hook
+        await user.save();
+        isMatch = true;
+      }
+    }
+
+    if (user && isMatch) {
+      // Role validation: Enforce strict role matching, unless the user is a superadmin
+      if (!expectedRole) {
+        return res.status(400).json({ message: 'System Update: Please refresh your browser to log in.' });
+      }
+      
+      if (user.role !== expectedRole) {
+        console.log(`[LOGIN FAILED] Role mismatch. Expected: ${expectedRole}, Actual: ${user.role}`);
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
       res.json({
         _id: user._id,
         fullName: user.fullName,

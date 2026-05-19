@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 import Home from './pages/Home';
 import Rooms from './pages/Rooms';
@@ -17,6 +18,11 @@ import SignUp from './pages/SignUp';
 import AgentSignIn from './pages/AgentSignIn';
 import AgentSignUp from './pages/AgentSignUp';
 import LoginEntry from './pages/LoginEntry';
+import SuperAdminSignIn from './pages/SuperAdminSignIn';
+import HelpCenter from './pages/HelpCenter';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import ContactUs from './pages/ContactUs';
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingChatbot from './components/chatbot/FloatingChatbot';
@@ -25,10 +31,15 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <ThemeProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/rooms/:id" element={<RoomDetails />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route path="/contact-us" element={<ContactUs />} />
           
           {/* Booking Flow */}
           <Route path="/booking/:roomId" element={<BookingPayment />} />
@@ -40,6 +51,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/agent/signin" element={<AgentSignIn />} />
           <Route path="/agent/signup" element={<AgentSignUp />} />
+          <Route path="/superadmin/login" element={<SuperAdminSignIn />} />
           <Route path="/payment-setup" element={<PaymentSetup />} />
           
           {/* Dashboards - Protected by Role */}
@@ -53,7 +65,7 @@ function App() {
               <AgentDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/admin/agency" element={
+          <Route path="/agency/dashboard" element={
             <ProtectedRoute allowedRoles={['agency']}>
               <AgencyDashboard />
             </ProtectedRoute>
@@ -75,6 +87,7 @@ function App() {
           } />
         </Routes>
         <FloatingChatbot />
+        </ThemeProvider>
       </Router>
     </AuthProvider>
   );

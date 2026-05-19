@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      <main className="bg-surface dark:bg-slate-900 transition-colors">
         {/* Hero Section */}
         <section className="relative h-[870px] flex items-center justify-center pt-16 overflow-hidden">
           <div className="absolute inset-0 z-0">
@@ -25,7 +25,7 @@ export default function Home() {
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuA32CODe65MBP83F3-6LcGx4FgQijmjbC7hifZTIZ3hqJU4_kdjrwrxCFACDbeA2T_qqrEz-Eh_1O92BgMekz2cHroFlSmVFAmnZWMnE2Gpd46lVx8Y-MVo3IlzBDob-70KE5sNR9XIHcoMyKNjbzGm7r9A95Gbc5u6ADuxzzRI8sbADRdoP91ANRyjCxPATXIPYAIHlnI7Lq-D6Gl9zsUqp-1YHr8BfRrt_QB1YkzRMwBoXKY-7q1z2Ez5n9-12t4DODOJByIu5AMA"
               alt="Kathmandu city skyline at dusk"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-on-surface/40 via-transparent to-surface"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-on-surface/40 dark:from-slate-900/40 via-transparent to-surface dark:to-slate-900 transition-colors"></div>
           </div>
           <div className="relative z-10 text-center max-w-4xl px-4">
             <span className="inline-block text-white/90 text-sm font-bold tracking-[0.2em] uppercase mb-4">Redefining Himalayan Living</span>
@@ -36,13 +36,13 @@ export default function Home() {
         </section>
 
         {/* Available Rooms Section */}
-        <section className="py-24 px-8 max-w-screen-2xl mx-auto">
+        <section className="py-24 px-6 md:px-12 max-w-screen-xl mx-auto">
           <div className="flex justify-between items-end mb-16">
             <div>
-              <h2 className="text-3xl font-extrabold tracking-tight mb-4">Available Sanctuaries</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight mb-4 text-on-surface dark:text-slate-100 transition-colors">Available Sanctuaries</h2>
               <p className="text-on-surface dark:text-slate-400 max-w-md">Curated listings featuring modern amenities and traditional Kathmandu charm.</p>
             </div>
-            <Link to="/rooms" className="flex items-center text-primary font-bold group">
+            <Link to="/rooms" className="flex items-center text-primary dark:text-blue-400 font-bold group transition-colors">
               View All Listings
               <span className="material-symbols-outlined ml-2 transition-transform group-hover:translate-x-1">arrow_forward</span>
             </Link>
@@ -65,10 +65,10 @@ export default function Home() {
 
         {/* Neighborhood Spotlight */}
         <section className="py-24 bg-surface dark:bg-slate-800 overflow-hidden">
-          <div className="max-w-screen-2xl mx-auto px-8">
+          <div className="max-w-screen-xl mx-auto px-6 md:px-12">
             <div className="mb-16 text-center">
-              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-primary mb-2">Explore the City</h2>
-              <h3 className="text-4xl font-extrabold tracking-tighter">Neighborhood Spotlight</h3>
+              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-primary dark:text-blue-400 mb-2 transition-colors">Explore the City</h2>
+              <h3 className="text-4xl font-extrabold tracking-tighter text-on-surface dark:text-slate-100 transition-colors">Neighborhood Spotlight</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-[700px]">

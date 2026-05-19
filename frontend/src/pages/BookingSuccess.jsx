@@ -17,7 +17,7 @@ export default function BookingSuccess() {
   if (!booking || !room) return null;
 
   return (
-    <div className="bg-[#FAFBFE] min-h-screen font-['Inter']">
+    <div className="bg-[#FAFBFE] dark:bg-slate-950 min-h-screen font-['Inter']">
       <Navbar />
       
       <main className="max-w-screen-xl mx-auto px-6 pt-32 pb-20 flex flex-col items-center">
@@ -85,11 +85,11 @@ export default function BookingSuccess() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                        <button className="flex items-center justify-center gap-2 h-12 bg-[#F1F5F9] hover:bg-[#E2E8F0] transition-colors rounded-xl text-slate-900 dark:text-white text-xs font-bold">
+                        <button className="flex items-center justify-center gap-2 h-12 bg-[#F1F5F9] hover:bg-[#E2E8F0] dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors rounded-xl text-slate-900 dark:text-white text-xs font-bold">
                             <span className="material-symbols-outlined text-[18px]">chat</span>
                             Message
                         </button>
-                        <button className="flex items-center justify-center gap-2 h-12 bg-[#F1F5F9] hover:bg-[#E2E8F0] transition-colors rounded-xl text-slate-900 dark:text-white text-xs font-bold">
+                        <button className="flex items-center justify-center gap-2 h-12 bg-[#F1F5F9] hover:bg-[#E2E8F0] dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors rounded-xl text-slate-900 dark:text-white text-xs font-bold">
                             <span className="material-symbols-outlined text-[18px]">call</span>
                             Call
                         </button>
@@ -109,7 +109,7 @@ export default function BookingSuccess() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">Guests</span>
                             <span className="text-[13px] font-bold text-slate-900 dark:text-white">2 Adults</span>
                         </div>
-                        <div className="flex justify-between items-center pt-2 border-t border-slate-50">
+                        <div className="flex justify-between items-center pt-2 border-t border-slate-50 dark:border-slate-800">
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">Status</span>
                             <span className="px-3 py-1 bg-[#0040A1] text-white text-[9px] font-black tracking-widest rounded-full uppercase">CONFIRMED</span>
                         </div>
@@ -129,7 +129,7 @@ export default function BookingSuccess() {
             </Link>
             <Link 
               to="/user/dashboard"
-              className="text-[#0040A1] font-bold text-lg hover:underline underline-offset-4"
+              className="text-[#0040A1] dark:text-blue-400 font-bold text-lg hover:underline underline-offset-4"
             >
               View My Bookings
             </Link>

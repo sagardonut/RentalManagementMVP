@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminSidebar = ({ activeTab, setActiveTab }) => {
@@ -10,6 +10,7 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
     { id: 'agencies', icon: 'corporate_fare', label: 'Agencies' },
     { id: 'agents', icon: 'badge', label: 'Agents' },
     { id: 'rooms', icon: 'bed', label: 'Rooms' },
+    { id: 'pending_rooms', icon: 'pending_actions', label: 'Pending Rooms' },
     { id: 'users', icon: 'group', label: 'Users' },
     { id: 'payments', icon: 'payments', label: 'Payments' },
     { id: 'reports', icon: 'analytics', label: 'Reports' },
@@ -43,10 +44,10 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
 
       <div className="p-4 space-y-4">
         <div className="pt-4 border-t border-slate-50 dark:border-slate-800 space-y-1">
-          <button className="w-full flex items-center gap-4 px-6 py-3 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl transition-colors">
+          <Link to="/help" className="w-full flex items-center gap-4 px-6 py-3 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl transition-colors">
             <span className="material-symbols-outlined text-xl text-slate-400 dark:text-slate-500 dark:text-slate-400">help</span>
             <span className="text-sm font-semibold">Help Center</span>
-          </button>
+          </Link>
           <button 
             onClick={logout}
             className="w-full flex items-center gap-4 px-6 py-3 text-slate-400 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 rounded-xl transition-colors group"

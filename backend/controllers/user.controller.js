@@ -1,6 +1,16 @@
 const User = require('../models/User.model');
 const Room = require('../models/Room.model');
 
+// GET /api/users/all - all users across all roles
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching all users', error: error.message });
+  }
+};
+
 // GET /api/users/agents - all agents
 exports.getAgents = async (req, res) => {
   try {
@@ -42,13 +52,15 @@ exports.getStats = async (req, res) => {
     const Booking = require('../models/Booking.model');
     const bookings = await Booking.find({ status: 'confirmed' });
     const totalRevenue = bookings.reduce((sum, b) => sum + b.totalAmount, 0);
+    const totalBookings = await Booking.countDocuments({});
 
     res.status(200).json({ 
       totalUsers, 
       totalAgents, 
       totalAgencies, 
       totalRooms, 
-      totalRevenue 
+      totalRevenue,
+      totalBookings
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching stats', error: error.message });
@@ -92,11 +104,15 @@ exports.updateUser = async (req, res) => {
       delete updates.password;
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      updates,
-      { new: true, runValidators: true }
-    ).select('-password');
+    // Apply updates
+    Object.keys(updates).forEach((key) => {
+      user[key] = updates[key];
+    });
+
+    await user.save(); // This triggers the pre('save') hash middleware
+
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -132,11 +148,11 @@ exports.updateUserStatus = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { isActive: isActive },
-      { new: true }
-    ).select('-password');
+    user.isActive = isActive;
+    await user.save();
+
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
 
     res.status(200).json(updatedUser);
   } catch (error) {

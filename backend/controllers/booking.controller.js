@@ -14,6 +14,10 @@ exports.createBooking = async (req, res) => {
       return res.status(404).json({ message: 'Room not found' });
     }
 
+    if (!room.isAvailable) {
+      return res.status(400).json({ message: 'This room is already booked and unavailable' });
+    }
+
     if (!req.user) {
       return res.status(401).json({ message: 'Not authorized, user data missing' });
     }
@@ -26,6 +30,9 @@ exports.createBooking = async (req, res) => {
       totalAmount,
       status: 'confirmed'
     });
+
+    room.isAvailable = false;
+    await room.save();
 
     res.status(201).json(booking);
   } catch (error) {

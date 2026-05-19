@@ -9,6 +9,8 @@ import RoomManagement from '../components/admin/RoomManagement';
 import RecentPayments from '../components/admin/RecentPayments';
 import PaymentsManagement from '../components/admin/PaymentsManagement';
 import Reports from '../components/admin/Reports';
+import UserManagement from '../components/admin/UserManagement';
+import PendingRoomsManagement from '../components/admin/PendingRoomsManagement';
 
 const API = 'http://localhost:5001/api';
 
@@ -101,7 +103,7 @@ const SuperAdminDashboard = () => {
             console.error('Failed to fetch agents:', err);
             return { data: [] };
           }),
-          axios.get('http://localhost:5001/api/rooms', config).catch(err => {
+          axios.get('http://localhost:5001/api/rooms/admin/all', config).catch(err => {
             console.error('Failed to fetch rooms:', err);
             return { data: [] };
           })
@@ -111,7 +113,7 @@ const SuperAdminDashboard = () => {
         setRecentBookings(bookingsRes.data || []);
         setAgents(agentsRes.data || []);
         setAgenciesList(agenciesRes.data || []); // For agent creation dropdown
-        setRooms(roomsRes.data || []);
+        setRooms(roomsRes.data?.rooms || (Array.isArray(roomsRes.data) ? roomsRes.data : []));
 
         // Calculate stats from real data
         const totalRev = (bookingsRes.data || []).reduce((acc, curr) => acc + (curr.totalPrice || 0), 0);
@@ -480,7 +482,7 @@ const SuperAdminDashboard = () => {
         },
         body: JSON.stringify({
           ...roomForm,
-          price: parseFloat(roomForm.price),
+          pricePerMonth: parseFloat(roomForm.price),
           maxOccupancy: parseInt(roomForm.maxOccupancy)
         })
       });
@@ -531,7 +533,7 @@ const SuperAdminDashboard = () => {
         },
         body: JSON.stringify({
           ...roomForm,
-          price: parseFloat(roomForm.price),
+          pricePerMonth: parseFloat(roomForm.price),
           maxOccupancy: parseInt(roomForm.maxOccupancy)
         })
       });
@@ -632,7 +634,7 @@ const SuperAdminDashboard = () => {
       title: room.title,
       description: room.description || '',
       type: room.type || 'single',
-      price: room.price.toString(),
+      price: room.pricePerMonth ? room.pricePerMonth.toString() : '',
       maxOccupancy: room.maxOccupancy || 2,
       location: room.location || '',
       amenities: room.amenities || [],
@@ -735,6 +737,12 @@ const SuperAdminDashboard = () => {
             </>
           )}
 
+          {/* ─── PENDING ROOMS TAB ─── */}
+          {!loading && activeTab === 'pending_rooms' && (
+            <PendingRoomsManagement />
+          )}
+
+          {/* ─── PAYMENTS TAB ─── */}
           {activeTab === 'payments' && (
             <PaymentsManagement />
           )}
@@ -789,13 +797,7 @@ const SuperAdminDashboard = () => {
           )}
 
           {activeTab === 'users' && (
-            <div className="flex justify-center items-center py-20">
-              <div className="text-center">
-                <span className="material-symbols-outlined text-6xl text-on-surface dark:text-slate-400 mb-4 block">group</span>
-                <h3 className="text-xl font-bold text-on-surface dark:text-slate-400 mb-2">Users Management</h3>
-                <p className="text-on-surface dark:text-slate-400 text-sm">This section is under development</p>
-              </div>
-            </div>
+            <UserManagement />
           )}
         </main>
       </div>

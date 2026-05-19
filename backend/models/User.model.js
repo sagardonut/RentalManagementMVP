@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'agent', 'agency', 'admin', 'superadmin'],
+    enum: ['user', 'agent', 'agency', 'superadmin'],
     default: 'user',
   },
   hasPaidFee: {

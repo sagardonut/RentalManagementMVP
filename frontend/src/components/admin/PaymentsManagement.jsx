@@ -1,18 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-const generateMockPayments = () => {
-  const statuses = ['completed', 'pending', 'failed'];
-  const methods = ['Credit Card', 'PayPal', 'Bank Transfer', 'Stripe'];
-  
-  return Array.from({ length: 50 }, (_, i) => ({
-    id: `TXN-${1000 + i}`,
-    date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString().split('T')[0],
-    amount: Math.floor(Math.random() * 5000) + 100,
-    customer: `User ${i + 1}`,
-    method: methods[Math.floor(Math.random() * methods.length)],
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-  })).sort((a, b) => new Date(b.date) - new Date(a.date));
-};
+// generateMockPayments removed.
+import { useAuth } from '../../context/AuthContext';
 
 const PaymentsManagement = () => {
   const [payments, setPayments] = useState([]);
@@ -22,13 +11,30 @@ const PaymentsManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
+  const { user } = useAuth();
+  const token = user?.token;
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Simulate API call for AI-generated data
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setPayments(generateMockPayments());
+      const response = await fetch('http://localhost:5001/api/bookings/all', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch data');
+      const data = await response.json();
+      
+      const mappedPayments = data.map(booking => ({
+        id: booking._id.slice(-8).toUpperCase(), // Use last 8 chars of Mongo ID as TXN ID
+        date: new Date(booking.createdAt).toISOString().split('T')[0],
+        amount: booking.totalAmount || 0,
+        customer: booking.userId?.fullName || 'Unknown User',
+        method: booking.paymentMethod || 'Bank Transfer',
+        status: booking.status === 'confirmed' ? 'completed' : booking.status,
+      }));
+      setPayments(mappedPayments);
     } catch (err) {
       setError('Failed to fetch payment data. Please try again.');
     } finally {

@@ -39,7 +39,7 @@ const protect = async (req, res, next) => {
 };
 
 const agentOnly = (req, res, next) => {
-  if (req.user && (req.user.role === 'agent' || req.user.role === 'agency')) {
+  if (req.user && (req.user.role === 'agent' || req.user.role === 'agency' || req.user.role === 'superadmin')) {
     next();
   } else {
     res.status(403).json({ message: 'Access denied. Agents only.' });

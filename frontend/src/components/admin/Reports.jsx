@@ -10,36 +10,8 @@ import {
   Legend
 } from 'recharts';
 
-// Mock Data Generators
-const generateMockChartData = (period) => {
-  const data = [];
-  let points = period === 'daily' ? 7 : period === 'weekly' ? 4 : 12;
-  const labels = 
-    period === 'daily' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] :
-    period === 'weekly' ? ['Week 1', 'Week 2', 'Week 3', 'Week 4'] :
-    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  for (let i = 0; i < points; i++) {
-    data.push({
-      name: labels[i],
-      revenue: Math.floor(Math.random() * 5000) + 1000,
-      bookings: Math.floor(Math.random() * 50) + 5
-    });
-  }
-  return data;
-};
-
-const generateMockTableData = () => {
-  const statuses = ['Confirmed', 'Pending', 'Cancelled', 'Completed'];
-  return Array.from({ length: 20 }, (_, i) => ({
-    id: `BKG-${10000 + i}`,
-    user: `User ${i + 1}`,
-    property: `Apartment ${Math.floor(Math.random() * 10) + 1}`,
-    amount: Math.floor(Math.random() * 1000) + 100,
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString().split('T')[0]
-  })).sort((a, b) => new Date(b.date) - new Date(a.date));
-};
+import { useAuth } from '../../context/AuthContext';
+// Mock Data Generators removed.
 
 const Reports = () => {
   const [loading, setLoading] = useState(true);
@@ -50,13 +22,61 @@ const Reports = () => {
   const [chartPeriod, setChartPeriod] = useState('daily');
   const [dateRange, setDateRange] = useState('30days');
 
+  const { user } = useAuth();
+  const token = user?.token;
+  
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalBookings: 0,
+    activeUsers: 0
+  });
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      setChartData(generateMockChartData(chartPeriod));
-      setTableData(generateMockTableData());
+      // Fetch stats
+      const statsRes = await fetch('http://localhost:5001/api/users/stats');
+      const statsData = await statsRes.json();
+      
+      setStats({
+        totalRevenue: statsData.totalRevenue || 0,
+        totalBookings: statsData.totalBookings || 0,
+        activeUsers: statsData.totalUsers || 0
+      });
+
+      // Fetch bookings for the table and chart
+      const bookingsRes = await fetch('http://localhost:5001/api/bookings/all', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const bookingsData = await bookingsRes.json();
+
+      // Map to table data
+      const mappedTable = bookingsData.map(b => ({
+        id: b._id.slice(-8).toUpperCase(),
+        user: b.userId?.fullName || 'Unknown',
+        property: b.roomId?.title || 'Unknown Property',
+        amount: b.totalAmount || 0,
+        status: b.status === 'confirmed' ? 'Completed' : 'Pending',
+        date: new Date(b.createdAt).toISOString().split('T')[0]
+      }));
+      setTableData(mappedTable);
+
+      // Generate simple chart data based on bookings (mocking the time series for now to fit the UI)
+      const data = [];
+      const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      for (let i = 0; i < 12; i++) {
+        // Find bookings in this month (simplified)
+        const monthBookings = bookingsData.filter(b => new Date(b.createdAt).getMonth() === i);
+        const revenue = monthBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+        data.push({
+          name: labels[i],
+          revenue: revenue,
+          bookings: monthBookings.length
+        });
+      }
+      setChartData(data);
+
     } catch (err) {
       setError('Failed to fetch report data. Please try again.');
     } finally {
@@ -136,7 +156,7 @@ const Reports = () => {
             </div>
           </div>
           <div className="text-3xl font-black text-slate-800 dark:text-slate-100">
-            {loading ? '...' : '$124,500'}
+            {loading ? '...' : `$${stats.totalRevenue.toLocaleString()}`}
           </div>
         </div>
         
@@ -148,19 +168,19 @@ const Reports = () => {
             </div>
           </div>
           <div className="text-3xl font-black text-slate-800 dark:text-slate-100">
-            {loading ? '...' : '1,420'}
+            {loading ? '...' : stats.totalBookings.toLocaleString()}
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Users</h3>
+            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Users</h3>
             <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
               <span className="material-symbols-outlined text-indigo-600 dark:text-indigo-400">group</span>
             </div>
           </div>
           <div className="text-3xl font-black text-slate-800 dark:text-slate-100">
-            {loading ? '...' : '8,940'}
+            {loading ? '...' : stats.activeUsers.toLocaleString()}
           </div>
         </div>
 

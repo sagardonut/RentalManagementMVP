@@ -12,11 +12,20 @@ export default function Rooms() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     location: 'All Locations',
-    maxPrice: 'Price Range'
+    priceRange: 'Price Range'
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRooms, setTotalRooms] = useState(0);
+  const [priceRanges, setPriceRanges] = useState([]);
+
+  // Fetch dynamic price ranges
+  useEffect(() => {
+    fetch('http://localhost:5001/api/rooms/price-ranges')
+      .then(res => res.json())
+      .then(data => setPriceRanges(data))
+      .catch(err => console.error('Error fetching price ranges:', err));
+  }, []);
 
   // Read location from URL params on mount
   useEffect(() => {
@@ -36,7 +45,11 @@ export default function Rooms() {
     try {
       let url = `http://localhost:5001/api/rooms?page=${page}&limit=${ROOMS_PER_PAGE}&`;
       if (filters.location !== 'All Locations') url += `location=${filters.location}&`;
-      if (filters.maxPrice !== 'Price Range') url += `maxPrice=${filters.maxPrice}&`;
+      if (filters.priceRange && filters.priceRange !== 'Price Range') {
+        const [min, max] = filters.priceRange.split('-');
+        if (min) url += `minPrice=${min}&`;
+        if (max) url += `maxPrice=${max}&`;
+      }
 
       const response = await fetch(url);
       const data = await response.json();
@@ -66,12 +79,12 @@ export default function Rooms() {
   return (
     <>
       <Navbar />
-      <main className="pt-24 pb-16 min-h-screen">
-        <div className="max-w-screen-2xl mx-auto px-8">
+      <main className="pt-24 pb-16 min-h-screen bg-white dark:bg-slate-900 transition-colors">
+        <div className="max-w-screen-xl mx-auto px-6 md:px-12">
           {/* Header */}
           <div className="mb-12 border-b border-slate-200 dark:border-slate-700 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tighter text-blue-900 mb-2">Available Listings</h1>
+              <h1 className="text-4xl font-extrabold tracking-tighter text-blue-900 dark:text-blue-400 mb-2 transition-colors">Available Listings</h1>
               <p className="text-slate-500 dark:text-slate-400">
                 {loading ? 'Loading...' : `Showing ${rooms.length} of ${totalRooms} properties in Kathmandu.`}
               </p>
@@ -83,7 +96,7 @@ export default function Rooms() {
                 <select
                   value={filters.location}
                   onChange={(e) => handleFilterChange('location', e.target.value)}
-                  className="appearance-none border border-slate-200 dark:border-slate-700 rounded-lg px-6 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer pr-10"
+                  className="appearance-none border border-slate-200 dark:border-slate-700 rounded-lg px-6 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer pr-10"
                 >
                   <option>All Locations</option>
                   <option>Baneshwor</option>
@@ -97,14 +110,14 @@ export default function Rooms() {
 
               <div className="relative">
                 <select
-                  value={filters.maxPrice}
-                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-                  className="appearance-none border border-slate-200 dark:border-slate-700 rounded-lg px-6 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer pr-10"
+                  value={filters.priceRange}
+                  onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                  className="appearance-none border border-slate-200 dark:border-slate-700 rounded-lg px-6 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer pr-10"
                 >
-                  <option>Price Range</option>
-                  <option>NPR 25,000</option>
-                  <option>NPR 45,000</option>
-                  <option>NPR 90,000</option>
+                  <option value="Price Range">Price Range</option>
+                  {Array.isArray(priceRanges) && priceRanges.map((range, index) => (
+                    <option key={index} value={range.value}>{range.label}</option>
+                  ))}
                 </select>
                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
               </div>
@@ -140,7 +153,7 @@ export default function Rooms() {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all ${currentPage === 1 ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 shadow-sm hover:-translate-x-0.5'}`}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all ${currentPage === 1 ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm hover:-translate-x-0.5'}`}
                   >
                     <span className="material-symbols-outlined text-lg">arrow_back</span>
                     Previous
@@ -158,7 +171,7 @@ export default function Rooms() {
                         <button
                           key={i}
                           onClick={() => handlePageChange(page)}
-                          className={`w-12 h-12 rounded-xl font-bold text-sm flex items-center justify-center transition-all ${currentPage === page ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800'}`}
+                          className={`w-12 h-12 rounded-xl font-bold text-sm flex items-center justify-center transition-all ${currentPage === page ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
                         >
                           {page}
                         </button>
@@ -169,7 +182,7 @@ export default function Rooms() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all ${currentPage === totalPages ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 shadow-sm hover:translate-x-0.5'}`}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all ${currentPage === totalPages ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm hover:translate-x-0.5'}`}
                   >
                     Next
                     <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -187,9 +200,10 @@ export default function Rooms() {
           ) : (
             <div className="text-center py-24 bg-slate-50 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700">
               <span className="material-symbols-outlined text-6xl text-slate-300 mb-4 block">search_off</span>
-              <h3 className="text-2xl font-bold text-slate-400">No rooms found matching your criteria.</h3>
+              <h3 className="text-2xl font-bold text-slate-400">Not available</h3>
+              <p className="text-slate-500 dark:text-slate-500 mt-2">No properties match your selected criteria.</p>
               <button
-                onClick={() => setFilters({ location: 'All Locations', maxPrice: 'Price Range' })}
+                onClick={() => setFilters({ location: 'All Locations', priceRange: 'Price Range' })}
                 className="mt-4 text-blue-600 font-bold hover:underline"
               >
                 Clear all filters

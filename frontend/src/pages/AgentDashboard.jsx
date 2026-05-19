@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import UserProfileDropdown from '../components/common/UserProfileDropdown';
+import ThemeToggle from '../components/common/ThemeToggle';
 
 const API = 'http://localhost:5001/api';
 
@@ -36,7 +37,10 @@ export default function AgentDashboard() {
     if (!user) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API}/rooms?agentId=${user._id}&limit=100&page=1`);
+      const token = getToken();
+      const res = await fetch(`${API}/rooms/agent/my-rooms?limit=100&page=1`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       const data = await res.json();
       setRooms(data.rooms || []);
     } catch (e) {
@@ -149,8 +153,8 @@ export default function AgentDashboard() {
   };
 
   const totalRooms = rooms.length;
-  const activeRooms = rooms.filter(r => r.isVerified).length;
-  const pendingRooms = rooms.filter(r => !r.isVerified).length;
+  const activeRooms = rooms.filter(r => r.status === 'approved').length;
+  const pendingRooms = rooms.filter(r => r.status === 'pending').length;
 
   const getInitials = (name = '') => name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
@@ -179,9 +183,9 @@ export default function AgentDashboard() {
       )}
 
       {/* ── Sidebar ── */}
-      <aside className="h-screen w-64 fixed left-0 top-0 flex flex-col bg-[#ededf8] py-6 z-40 hidden md:flex shadow-sm">
+      <aside className="h-screen w-64 fixed left-0 top-0 flex flex-col bg-surface dark:bg-slate-800 py-6 z-40 hidden md:flex shadow-sm border-r border-outline-variant/20 dark:border-slate-700">
         <div className="px-6 mb-8">
-          <h1 className="text-lg font-bold text-primary">Agent Console</h1>
+          <h1 className="text-lg font-bold text-primary dark:text-blue-400 tracking-tight">Agent Console</h1>
           <p className="text-[0.7rem] text-on-surface dark:text-slate-400 uppercase tracking-widest font-semibold opacity-70">The Urban Sanctuary</p>
         </div>
         <nav className="flex-1 flex flex-col gap-1 px-2">
@@ -190,8 +194,8 @@ export default function AgentDashboard() {
               key={item.id}
               onClick={() => { if (item.id === 'add') { openAddForm(); } else setActiveTab(item.id); }}
               className={`w-full px-4 py-3 flex items-center gap-3 rounded-xl text-left transition-all duration-200 ${activeTab === item.id
-                  ? 'bg-white dark:bg-slate-900 text-primary font-semibold shadow-sm translate-x-1'
-                  : 'text-on-surface dark:text-slate-400 hover:bg-white dark:bg-slate-900/50'
+                  ? 'bg-surface dark:bg-slate-900 text-primary font-semibold shadow-sm translate-x-1'
+                  : 'text-on-surface dark:text-slate-400 hover:bg-surface dark:bg-slate-900/50'
                 }`}
             >
               <span className="material-symbols-outlined text-xl">{item.icon}</span>
@@ -200,11 +204,11 @@ export default function AgentDashboard() {
           ))}
         </nav>
         <div className="border-t border-outline-variant/20 pt-4 px-2 flex flex-col gap-1">
-          <a href="#" className="px-4 py-3 flex items-center gap-3 text-on-surface dark:text-slate-400 hover:bg-white dark:bg-slate-900/50 rounded-xl transition-all">
+          <Link to="/help" className="px-4 py-3 flex items-center gap-3 text-on-surface dark:text-slate-400 hover:bg-surface dark:bg-slate-900/50 rounded-xl transition-all">
             <span className="material-symbols-outlined text-xl">help</span>
             <span className="text-[0.875rem]">Help Center</span>
-          </a>
-          <button onClick={handleLogout} className="w-full px-4 py-3 flex items-center gap-3 text-on-surface dark:text-slate-400 hover:bg-white dark:bg-slate-900/50 rounded-xl transition-all">
+          </Link>
+          <button onClick={handleLogout} className="w-full px-4 py-3 flex items-center gap-3 text-on-surface dark:text-slate-400 hover:bg-surface dark:bg-slate-900/50 rounded-xl transition-all">
             <span className="material-symbols-outlined text-xl">logout</span>
             <span className="text-[0.875rem]">Sign Out</span>
           </button>
@@ -217,12 +221,13 @@ export default function AgentDashboard() {
         {/* Header */}
         <header className="flex justify-between items-center mb-12">
           <div>
-            <h2 className="text-4xl font-black tracking-tighter text-primary mb-2">Agent Dashboard</h2>
+            <h2 className="text-4xl font-black tracking-tighter text-primary dark:text-blue-400 mb-2">Agent Dashboard</h2>
             <p className="text-on-surface dark:text-slate-400 font-medium">
               Welcome back, <span className="font-bold text-on-surface dark:text-slate-100">{user?.fullName?.split(' ')[0] || 'Agent'}</span>. Managing the Sanctuary listings.
             </p>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <button
               onClick={openAddForm}
               className="bg-primary text-on-primary px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-[0_8px_24px_rgba(0,64,161,0.15)] hover:scale-[1.02] active:scale-95 transition-all"
@@ -271,7 +276,7 @@ export default function AgentDashboard() {
             {/* Recent listings preview */}
             <section>
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-black tracking-tight text-on-surface dark:text-slate-100">My Listings</h3>
+                <h3 className="text-2xl font-black tracking-tight text-on-surface dark:text-slate-100">Recent Listings (Top 5)</h3>
                 <button onClick={() => setActiveTab('rooms')} className="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
                   View All <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </button>
@@ -526,8 +531,10 @@ function RoomTable({ rooms, loading, onEdit, onDelete }) {
               <td className="px-6 py-4 text-sm text-on-surface dark:text-slate-400 font-medium">{room.location}</td>
               <td className="px-6 py-4 text-sm font-black text-primary">Rs. {Number(room.pricePerMonth).toLocaleString()}</td>
               <td className="px-6 py-4">
-                {room.isVerified ? (
-                  <span className="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Active</span>
+                {room.status === 'approved' ? (
+                  <span className="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Active / Approved</span>
+                ) : room.status === 'rejected' ? (
+                  <span className="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Rejected</span>
                 ) : (
                   <span className="bg-tertiary-container text-on-tertiary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Pending Review</span>
                 )}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/common/ThemeToggle';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -107,12 +108,14 @@ export default function SignUp() {
   return (
     <div className="bg-surface dark:bg-slate-900 text-on-surface dark:text-slate-100 min-h-screen flex flex-col pt-20">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-[#faf8ff]/80 backdrop-blur-lg shadow-sm">
+      <header className="fixed top-0 w-full z-50 bg-[#faf8ff]/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-sm">
         <div className="flex justify-between items-center h-20 px-6 md:px-12 w-full max-w-screen-2xl mx-auto">
-          <Link to="/" className="text-xl font-bold tracking-tighter text-primary">The Urban Sanctuary</Link>
+          <Link to="/" className="text-xl font-bold tracking-tighter text-primary dark:text-blue-400">The Urban Sanctuary</Link>
           <div className="hidden md:flex items-center gap-4 text-sm font-medium text-on-surface dark:text-slate-400">
             <span>Already have an account?</span>
-            <Link className="text-primary font-bold hover:text-surface-tint transition-all" to="/signin">Login</Link>
+            <Link className="text-primary dark:text-blue-400 font-bold hover:text-surface-tint dark:hover:text-blue-300 transition-all" to="/signin">Login</Link>
+            <div className="w-px h-4 bg-outline-variant/30 mx-2"></div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -127,12 +130,12 @@ export default function SignUp() {
             </div>
 
             {error && (
-              <div className="bg-error-container text-on-error-container p-4 rounded-xl text-sm font-bold">
+              <div className="bg-error-container dark:bg-red-900/30 text-on-error-container dark:text-red-400 p-4 rounded-xl text-sm font-bold">
                 {error}
               </div>
             )}
 
-            <div className="bg-surface dark:bg-slate-800 p-8 md:p-10 rounded-xl shadow-[0_8px_24px_-8px_rgba(25,27,35,0.06)] border border-outline-variant/20">
+            <div className="bg-surface dark:bg-slate-800 p-8 md:p-10 rounded-xl shadow-[0_8px_24px_-8px_rgba(25,27,35,0.06)] border border-outline-variant/20 dark:border-slate-700">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -142,12 +145,12 @@ export default function SignUp() {
                       value={formData.fullName}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-surface-tint/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.fullName ? 'ring-2 ring-error' : ''}`} 
+                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.fullName ? 'ring-2 ring-error dark:ring-red-500' : ''}`} 
                       placeholder="John Doe" 
                       type="text"
                     />
                     {fieldErrors.fullName && (
-                      <p className="text-xs text-error font-medium mt-1">{fieldErrors.fullName}</p>
+                      <p className="text-xs text-error dark:text-red-400 font-medium mt-1">{fieldErrors.fullName}</p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -157,12 +160,12 @@ export default function SignUp() {
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-surface-tint/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.phone ? 'ring-2 ring-error' : ''}`} 
+                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.phone ? 'ring-2 ring-error dark:ring-red-500' : ''}`} 
                       placeholder="+977 980 0000000" 
                       type="tel"
                     />
                     {fieldErrors.phone && (
-                      <p className="text-xs text-error font-medium mt-1">{fieldErrors.phone}</p>
+                      <p className="text-xs text-error dark:text-red-400 font-medium mt-1">{fieldErrors.phone}</p>
                     )}
                   </div>
                 </div>
@@ -173,12 +176,12 @@ export default function SignUp() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className={`w-full px-4 py-3 bg-surface dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-surface-tint/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.email ? 'ring-2 ring-error' : ''}`} 
+                    className={`w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.email ? 'ring-2 ring-error dark:ring-red-500' : ''}`} 
                     placeholder="professional@agency.com.np" 
                     type="email"
                   />
                   {fieldErrors.email && (
-                    <p className="text-xs text-error font-medium mt-1">{fieldErrors.email}</p>
+                    <p className="text-xs text-error dark:text-red-400 font-medium mt-1">{fieldErrors.email}</p>
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -189,7 +192,7 @@ export default function SignUp() {
                       value={formData.password}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-surface-tint/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.password ? 'ring-2 ring-error' : ''}`} 
+                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.password ? 'ring-2 ring-error dark:ring-red-500' : ''}`} 
                       placeholder="••••••••" 
                       type="password"
                       autoComplete="new-password"
@@ -202,19 +205,19 @@ export default function SignUp() {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-surface-tint/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.confirmPassword ? 'ring-2 ring-error' : ''}`} 
+                      className={`w-full px-4 py-3 bg-surface dark:bg-slate-900 border border-outline-variant/20 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-surface-tint/20 dark:focus:ring-blue-500/20 transition-all text-on-surface dark:text-slate-100 ${fieldErrors.confirmPassword ? 'ring-2 ring-error dark:ring-red-500' : ''}`} 
                       placeholder="••••••••" 
                       type="password"
                       autoComplete="new-password"
                     />
                     {fieldErrors.confirmPassword && (
-                      <p className="text-xs text-error font-medium mt-1">{fieldErrors.confirmPassword}</p>
+                      <p className="text-xs text-error dark:text-red-400 font-medium mt-1">{fieldErrors.confirmPassword}</p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-start gap-3 pt-2">
-                  <input required className="mt-1 rounded text-primary border-outline-variant focus:ring-primary" type="checkbox"/>
-                  <span className="text-sm text-on-surface dark:text-slate-400 leading-relaxed">I agree to the <a className="text-primary underline" href="#">Partner Terms of Service</a> and confirm that I am a licensed real estate professional in Nepal.</span>
+                  <input required className="mt-1 rounded text-primary dark:text-blue-500 border-outline-variant dark:border-slate-600 focus:ring-primary dark:focus:ring-blue-500" type="checkbox"/>
+                  <span className="text-sm text-on-surface dark:text-slate-400 leading-relaxed">I agree to the <a className="text-primary dark:text-blue-400 underline" href="#">Partner Terms of Service</a> and confirm that I am a licensed real estate professional in Nepal.</span>
                 </div>
                 
                 {/* Mobile payment selector */}
@@ -227,12 +230,12 @@ export default function SignUp() {
 
           {/* Right Column: Payment & Access Fee */}
           <div className="lg:col-span-5 sticky top-32">
-            <div className="bg-surface dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-outline-variant/10">
+            <div className="bg-surface dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-outline-variant/10 dark:border-slate-700">
               <div className="relative h-48 w-full">
                 <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACF39MK5T6uDr6o7xyPfpoCvG6W30NCarqmWabE6cunUEi7vzgOGXrS3a_K0X266gP3ftkPxAQfjQudIVyH9d41TYgK38iJnNH9G9BgO1NnaDzFLl9j_Olfgt0vFJborYcr4upVO6KFkhzyZGwTDv8ARiiW6wBKzZMajanvEY8mCg-Ivbu3f-qYNPj3yt2BCbd3Fpg4t4OAjWmltG8dx26b7PvnifgCesXQCkmOVJxt5soZMD6whjGq70b2y07mKtJmA-AdLJjKVSb" alt="Modern interior" />
-                <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low dark:from-slate-800 to-transparent"></div>
                 <div className="absolute bottom-6 left-8">
-                  <span className="inline-block px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-[0.65rem] font-black uppercase tracking-widest mb-2">Agency Registration</span>
+                  <span className="inline-block px-3 py-1 rounded-full bg-tertiary/10 dark:bg-blue-900/40 text-tertiary dark:text-blue-300 text-[0.65rem] font-black uppercase tracking-widest mb-2">Agency Registration</span>
                   <h2 className="text-2xl font-extrabold text-on-surface dark:text-slate-100">Platform Access</h2>
                 </div>
               </div>
@@ -240,7 +243,7 @@ export default function SignUp() {
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
                     <p className="text-sm text-on-surface dark:text-slate-400 font-medium">One-time Access Fee</p>
-                    <p className="text-xs text-primary font-bold">Lifetime listing privileges</p>
+                    <p className="text-xs text-primary dark:text-blue-400 font-bold">Lifetime listing privileges</p>
                   </div>
                   <div className="text-right">
                     <p className="text-4xl font-black text-on-surface dark:text-slate-100">Rs. 500</p>
@@ -252,27 +255,27 @@ export default function SignUp() {
                     <button 
                       type="button"
                       onClick={() => setPaymentMethod('esewa')}
-                      className={`group flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'esewa' ? 'bg-surface dark:bg-slate-800 border-primary shadow-sm' : 'bg-surface dark:bg-slate-800 border-transparent hover:border-outline-variant'}`}
+                      className={`group flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'esewa' ? 'bg-surface dark:bg-slate-800 border-primary dark:border-blue-500 shadow-sm' : 'bg-surface dark:bg-slate-800 border-transparent hover:border-outline-variant dark:hover:border-slate-600'}`}
                     >
                       <div className="w-12 h-12 mb-2 flex items-center justify-center bg-emerald-100 rounded-lg">
                         <span className="text-emerald-700 font-black text-xs">eSewa</span>
                       </div>
                       <span className={`text-xs font-bold ${paymentMethod === 'esewa' ? 'text-on-surface dark:text-slate-100' : 'text-on-surface dark:text-slate-400'}`}>eSewa Wallet</span>
-                      <div className={`mt-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'esewa' ? 'border-primary' : 'border-outline-variant'}`}>
-                        {paymentMethod === 'esewa' && <div className="w-2 h-2 bg-primary rounded-full"></div>}
+                      <div className={`mt-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'esewa' ? 'border-primary dark:border-blue-500' : 'border-outline-variant dark:border-slate-600'}`}>
+                        {paymentMethod === 'esewa' && <div className="w-2 h-2 bg-primary dark:bg-blue-500 rounded-full"></div>}
                       </div>
                     </button>
                     <button 
                       type="button"
                       onClick={() => setPaymentMethod('khalti')}
-                      className={`group flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'khalti' ? 'bg-surface dark:bg-slate-800 border-primary shadow-sm' : 'bg-surface dark:bg-slate-800 border-transparent hover:border-outline-variant'}`}
+                      className={`group flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'khalti' ? 'bg-surface dark:bg-slate-800 border-primary dark:border-blue-500 shadow-sm' : 'bg-surface dark:bg-slate-800 border-transparent hover:border-outline-variant dark:hover:border-slate-600'}`}
                     >
                       <div className="w-12 h-12 mb-2 flex items-center justify-center bg-purple-100 rounded-lg">
                         <span className="text-purple-700 font-black text-xs">Khalti</span>
                       </div>
                       <span className={`text-xs font-bold ${paymentMethod === 'khalti' ? 'text-on-surface dark:text-slate-100' : 'text-on-surface dark:text-slate-400'}`}>Khalti SDK</span>
-                      <div className={`mt-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'khalti' ? 'border-primary' : 'border-outline-variant'}`}>
-                        {paymentMethod === 'khalti' && <div className="w-2 h-2 bg-primary rounded-full"></div>}
+                      <div className={`mt-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'khalti' ? 'border-primary dark:border-blue-500' : 'border-outline-variant dark:border-slate-600'}`}>
+                        {paymentMethod === 'khalti' && <div className="w-2 h-2 bg-primary dark:bg-blue-500 rounded-full"></div>}
                       </div>
                     </button>
                   </div>
@@ -281,7 +284,7 @@ export default function SignUp() {
                   <button 
                     onClick={handleSubmit}
                     disabled={isLoading}
-                    className="w-full bg-primary hover:bg-surface dark:bg-slate-900-tint text-white py-5 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                    className="w-full bg-primary dark:bg-blue-600 hover:bg-primary-container dark:hover:bg-blue-700 text-white py-5 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 dark:shadow-blue-600/20 transition-all active:scale-[0.98] disabled:opacity-50"
                   >
                     {isLoading ? 'Creating Account...' : 'Create Account'}
                   </button>
@@ -295,15 +298,15 @@ export default function SignUp() {
         </div>
       </main>
 
-      <footer className="bg-surface dark:bg-slate-800 py-10 px-12 border-t border-outline-variant/10">
+      <footer className="bg-surface dark:bg-slate-800 py-10 px-12 border-t border-outline-variant/10 dark:border-slate-700">
         <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold uppercase tracking-widest text-on-surface dark:text-slate-400">
-          <div className="text-lg font-black text-primary lowercase tracking-tighter">The Urban Sanctuary</div>
+          <div className="text-lg font-black text-primary dark:text-blue-400 lowercase tracking-tighter">The Urban Sanctuary</div>
           <div className="flex gap-8">
             <Link to="#">Privacy</Link>
             <Link to="#">Terms</Link>
             <Link to="#">Security</Link>
           </div>
-          <p>© 2024 The Urban Sanctuary</p>
+          <p className="md:mr-24 lg:mr-80">© 2024 The Urban Sanctuary</p>
         </div>
       </footer>
     </div>

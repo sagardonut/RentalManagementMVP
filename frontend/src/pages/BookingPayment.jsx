@@ -73,7 +73,7 @@ export default function BookingPayment() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-slate-950">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
@@ -81,7 +81,7 @@ export default function BookingPayment() {
 
   if (!room) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-slate-950">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">Room details not found</h2>
           <Link to="/rooms" className="text-primary hover:underline">Back to listings</Link>
@@ -91,7 +91,7 @@ export default function BookingPayment() {
   }
 
   return (
-    <div className="bg-[#FAFBFE] min-h-screen">
+    <div className="bg-[#FAFBFE] dark:bg-slate-950 min-h-screen">
       <Navbar />
       
       <main className="max-w-screen-xl mx-auto px-6 pt-32 pb-20">
@@ -124,7 +124,7 @@ export default function BookingPayment() {
                     onClick={() => setSelectedRooms(item.id)}
                     className={`flex flex-col items-start p-6 rounded-xl border-2 transition-all duration-200 text-left bg-white dark:bg-slate-900 ${
                       selectedRooms === item.id 
-                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]' 
+                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE] dark:bg-slate-800' 
                       : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:border-slate-700'
                     }`}
                   >
@@ -154,7 +154,7 @@ export default function BookingPayment() {
                     onClick={() => setPaymentMethod(method.id)}
                     className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left bg-white dark:bg-slate-900 ${
                       paymentMethod === method.id 
-                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE]' 
+                      ? 'border-[#0040A1] ring-4 ring-[#0040A1]/5 bg-[#FAFBFE] dark:bg-slate-800' 
                       : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:border-slate-700'
                     }`}
                   >
@@ -177,9 +177,9 @@ export default function BookingPayment() {
                 { label: 'SECURE TRANSACTION', icon: 'shield_lock' },
                 { label: 'REFUND PROTECTION', icon: 'security' }
               ].map((badge, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-[#F1F5F9]/50 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-full">
-                  <span className="material-symbols-outlined text-[18px] text-[#0040A1]">{badge.icon}</span>
-                  <span className="text-[10px] font-black tracking-widest text-[#0040A1]">{badge.label}</span>
+                <div key={idx} className="flex items-center gap-2 bg-[#F1F5F9]/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-full">
+                  <span className="material-symbols-outlined text-[18px] text-[#0040A1] dark:text-blue-400">{badge.icon}</span>
+                  <span className="text-[10px] font-black tracking-widest text-[#0040A1] dark:text-blue-400">{badge.label}</span>
                 </div>
               ))}
             </div>
@@ -197,7 +197,7 @@ export default function BookingPayment() {
                 <div>
                   <h3 className="text-sm font-black text-slate-900 dark:text-white mb-1 line-clamp-1">{room.title}</h3>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-2">{room.location}</div>
-                  <div className="inline-flex px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold tracking-wider uppercase">PREMIUM LISTING</div>
+                  <div className="inline-flex px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded text-[9px] font-bold tracking-wider uppercase">PREMIUM LISTING</div>
                 </div>
               </div>
 
