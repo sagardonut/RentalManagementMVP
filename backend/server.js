@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.routes.js');
 const roomRoutes = require('./routes/room.routes.js');
 const bookingRoutes = require('./routes/booking.routes.js');
 const chatRoutes = require('./routes/chat.routes.js');
+const paymentRoutes = require('./routes/payment.routes');
 const userRoutes = require('./routes/user.routes.js');
 
 // ============ MODELS ============
@@ -97,6 +98,7 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // ============ BASE ROUTE ============
 app.get('/', (req, res) => {

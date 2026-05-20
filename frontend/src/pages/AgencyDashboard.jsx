@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import PendingRoomsManagement from "../components/admin/PendingRoomsManagement";
 import RoomCRUDModal from "../components/admin/RoomCRUDModal";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 const API = "http://localhost:5001/api";
 
@@ -13,11 +14,10 @@ function SparkBar({ heights = [], peak = 4 }) {
       {heights.map((h, i) => (
         <div
           key={i}
-          className={`w-full rounded-sm transition-colors ${
-            i === peak
+          className={`w-full rounded-sm transition-colors ${i === peak
               ? "bg-primary"
               : "bg-primary/10 group-hover:bg-primary/20"
-          }`}
+            }`}
           style={{ height: `${h}%` }}
         />
       ))}
@@ -81,7 +81,6 @@ export default function AgencyDashboard() {
     email: "",
     phone: "",
     password: "",
-    specialization: "",
   });
   const [editingAgent, setEditingAgent] = useState(null);
   const [editingRoom, setEditingRoom] = useState(null);
@@ -102,7 +101,7 @@ export default function AgencyDashboard() {
       3000,
     );
   };
-  
+
   const showToast = triggerToast;
 
   useEffect(() => {
@@ -160,7 +159,7 @@ export default function AgencyDashboard() {
       setLoading(false);
     }
   };
-  
+
   const fetchData = fetchAll;
 
   const handleLogout = () => {
@@ -200,7 +199,6 @@ export default function AgencyDashboard() {
           email: "",
           phone: "",
           password: "",
-          specialization: "",
         });
         triggerToast("Agent created successfully");
         fetchAll();
@@ -246,7 +244,6 @@ export default function AgencyDashboard() {
           email: "",
           phone: "",
           password: "",
-          specialization: "",
         });
         triggerToast("Agent updated successfully");
       } else {
@@ -268,8 +265,8 @@ export default function AgencyDashboard() {
         method: "DELETE",
         headers: token
           ? {
-              Authorization: `Bearer ${token}`,
-            }
+            Authorization: `Bearer ${token}`,
+          }
           : {},
       });
 
@@ -295,7 +292,6 @@ export default function AgencyDashboard() {
       email: agent.email,
       phone: agent.phone,
       password: "",
-      specialization: agent.specialization || "",
     });
     setShowEditModal(true);
   };
@@ -337,7 +333,7 @@ export default function AgencyDashboard() {
       triggerToast("Failed to update agent status. Please try again.", "error");
     }
   };
-  
+
   const handleEditRoom = (room) => {
     setEditingRoom(room);
     setIsRoomModalOpen(true);
@@ -423,11 +419,10 @@ export default function AgencyDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full px-4 py-3 flex items-center gap-3 rounded-xl text-left transition-all duration-200 ${
-                activeTab === item.id
+              className={`w-full px-4 py-3 flex items-center gap-3 rounded-xl text-left transition-all duration-200 ${activeTab === item.id
                   ? "bg-surface dark:bg-slate-800 text-primary font-semibold shadow-sm translate-x-1"
                   : "text-on-surface dark:text-slate-400 hover:bg-surface dark:bg-slate-800/50"
-              }`}
+                }`}
             >
               <span className="material-symbols-outlined text-xl">
                 {item.icon}
@@ -468,6 +463,7 @@ export default function AgencyDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <button className="p-2 text-on-surface dark:text-slate-400 hover:text-primary transition-colors">
               <span className="material-symbols-outlined">notifications</span>
             </button>
@@ -479,11 +475,11 @@ export default function AgencyDashboard() {
                 <span className="text-xs font-bold text-on-primary">
                   {user?.fullName
                     ? user.fullName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()
-                        .slice(0, 2)
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)
                     : "AA"}
                 </span>
               </div>
@@ -597,6 +593,16 @@ export default function AgencyDashboard() {
                   View and manage your agency's agents
                 </p>
               </div>
+              <button
+                onClick={() => {
+                  setEditingAgent(null);
+                  setAgentForm({ fullName: "", email: "", phone: "", password: "" });
+                  setShowAgentModal(true);
+                }}
+                className="px-5 py-2 bg-primary text-on-primary rounded-full font-bold text-sm hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">person_add</span> Add Agent
+              </button>
             </div>
             <AgentTable
               agents={agents}
@@ -713,11 +719,10 @@ export default function AgencyDashboard() {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`flex flex-col items-center gap-1 transition-colors ${
-              activeTab === item.id
+            className={`flex flex-col items-center gap-1 transition-colors ${activeTab === item.id
                 ? "text-primary"
                 : "text-on-surface dark:text-slate-400"
-            }`}
+              }`}
           >
             <span className="material-symbols-outlined">{item.icon}</span>
             <span className="text-[0.65rem] font-bold uppercase">
@@ -795,23 +800,6 @@ export default function AgencyDashboard() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-on-surface dark:text-slate-400 mb-1">
-                  Specialization
-                </label>
-                <input
-                  type="text"
-                  value={agentForm.specialization}
-                  onChange={(e) =>
-                    setAgentForm({
-                      ...agentForm,
-                      specialization: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  placeholder="Residential Specialist"
-                />
-              </div>
             </div>
 
             <div className="flex gap-3 mt-6">
@@ -835,11 +823,11 @@ export default function AgencyDashboard() {
       {/* Edit Agent Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold mb-4">Edit Agent</h3>
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
+            <h3 className="text-xl font-bold text-on-surface dark:text-slate-100 mb-4">Edit Agent</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface dark:text-slate-400 mb-1">
                   Full Name
                 </label>
                 <input
@@ -848,11 +836,11 @@ export default function AgencyDashboard() {
                   onChange={(e) =>
                     setAgentForm({ ...agentForm, fullName: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 bg-transparent text-on-surface dark:text-slate-100 border border-outline-variant dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface dark:text-slate-400 mb-1">
                   Email
                 </label>
                 <input
@@ -861,11 +849,11 @@ export default function AgencyDashboard() {
                   onChange={(e) =>
                     setAgentForm({ ...agentForm, email: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 bg-transparent text-on-surface dark:text-slate-100 border border-outline-variant dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface dark:text-slate-400 mb-1">
                   Phone
                 </label>
                 <input
@@ -874,11 +862,11 @@ export default function AgencyDashboard() {
                   onChange={(e) =>
                     setAgentForm({ ...agentForm, phone: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 bg-transparent text-on-surface dark:text-slate-100 border border-outline-variant dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface dark:text-slate-400 mb-1">
                   Password (leave blank to keep current)
                 </label>
                 <input
@@ -887,37 +875,21 @@ export default function AgencyDashboard() {
                   onChange={(e) =>
                     setAgentForm({ ...agentForm, password: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 bg-transparent text-on-surface dark:text-slate-100 border border-outline-variant dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   placeholder="••••••••"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Specialization
-                </label>
-                <input
-                  type="text"
-                  value={agentForm.specialization}
-                  onChange={(e) =>
-                    setAgentForm({
-                      ...agentForm,
-                      specialization: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-outline-variant dark:border-slate-600 text-on-surface dark:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdateAgent}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex-1 px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-primary-container transition-colors"
               >
                 Update Agent
               </button>
@@ -929,9 +901,9 @@ export default function AgencyDashboard() {
       {/* Delete Agent Confirmation Modal */}
       {showDeleteModal && agentToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold mb-2">Delete Agent</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
+            <h3 className="text-xl font-bold text-on-surface dark:text-slate-100 mb-2">Delete Agent</h3>
+            <p className="text-on-surface dark:text-slate-400 mb-6">
               Are you sure you want to delete agent{" "}
               <strong>{agentToDelete.fullName}</strong>? This action cannot be
               undone.
@@ -939,7 +911,7 @@ export default function AgencyDashboard() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-outline-variant dark:border-slate-600 text-on-surface dark:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 Cancel
               </button>
@@ -953,7 +925,7 @@ export default function AgencyDashboard() {
           </div>
         </div>
       )}
-      
+
       {/* Room CRUD Modal */}
       {isRoomModalOpen && (
         <RoomCRUDModal
@@ -1056,16 +1028,14 @@ function AgentTable({
                 <td className="px-6 py-5">
                   <button
                     onClick={() => onToggleStatus(agent)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      agent.isActive !== false ? "bg-green-500" : "bg-gray-300"
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${agent.isActive !== false ? "bg-green-500" : "bg-gray-300"
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-900 transition-transform ${
-                        agent.isActive !== false
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-900 transition-transform ${agent.isActive !== false
                           ? "translate-x-6"
                           : "translate-x-1"
-                      }`}
+                        }`}
                     />
                   </button>
                   <span className="ml-2 text-xs font-medium text-gray-600">
@@ -1185,11 +1155,10 @@ function RoomGrid({ rooms, loading, getInitials, onEdit, onDelete }) {
                 </div>
                 <div className="flex gap-2">
                   <span
-                    className={`px-2 py-0.5 rounded text-[0.6rem] font-bold uppercase ${
-                      isVerified
+                    className={`px-2 py-0.5 rounded text-[0.6rem] font-bold uppercase ${isVerified
                         ? "bg-primary/10 text-primary"
                         : "bg-tertiary/10 text-tertiary"
-                    }`}
+                      }`}
                   >
                     {isVerified ? "Verified" : "Available"}
                   </span>

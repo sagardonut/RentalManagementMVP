@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 
 const ChatWindow = ({ onClose }) => {
+  const { user } = useAuth();
   const [messages, setMessages] = useState([
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: 'Hello! I am your Urban Sanctuary AI assistant. How can I help you today with your rental needs?',
+      content: user
+        ? `Namaste ${user.fullName?.split(' ')[0] || ''}! 🙏 I'm your Urban Sanctuary AI concierge. How can I help you today?`
+        : 'Namaste! 🙏 I\'m your Urban Sanctuary AI concierge. Ask me about available rooms, locations, pricing, or how our platform works!',
       timestamp: new Date().toISOString()
     }
   ]);
@@ -43,12 +47,15 @@ const ChatWindow = ({ onClose }) => {
     setIsTyping(true);
 
     try {
-      // NOTE: Update port if backend runs on different port
+      const headers = { 'Content-Type': 'application/json' };
+      // Send auth token if user is logged in so backend knows who's talking
+      if (user?.token) {
+        headers['Authorization'] = `Bearer ${user.token}`;
+      }
+
       const response = await fetch('http://localhost:5001/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ message: text }),
       });
 
@@ -75,8 +82,8 @@ const ChatWindow = ({ onClose }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-      
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-slate-700 transition-colors">
+
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
         <div className="flex items-center space-x-3">
@@ -89,11 +96,13 @@ const ChatWindow = ({ onClose }) => {
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-blue-600"></div>
           </div>
           <div>
-            <h2 className="text-sm font-semibold">Urban Sanctuary Support</h2>
-            <p className="text-xs text-blue-100 font-medium">AI Assistant</p>
+            <h2 className="text-sm font-semibold">Urban Sanctuary</h2>
+            <p className="text-xs text-blue-100 font-medium">
+              {user ? `Chatting as ${user.role === 'user' ? 'Member' : user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}` : 'AI Concierge'}
+            </p>
           </div>
         </div>
-        <button 
+        <button
           onClick={onClose}
           className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors focus:outline-none"
         >
@@ -104,13 +113,13 @@ const ChatWindow = ({ onClose }) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50/50">
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50/50 dark:bg-slate-800/50 transition-colors">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
         {isTyping && <TypingIndicator />}
         {error && (
-          <div className="bg-red-50 text-red-600 text-xs px-3 py-2 rounded-lg text-center mb-4">
+          <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs px-3 py-2 rounded-lg text-center mb-4 transition-colors">
             {error}
           </div>
         )}
@@ -118,7 +127,7 @@ const ChatWindow = ({ onClose }) => {
       </div>
 
       {/* Input Form */}
-      <div className="p-3 bg-white border-t border-gray-100">
+      <div className="p-3 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700 transition-colors">
         <form onSubmit={handleSendMessage} className="relative flex items-center">
           <input
             type="text"
@@ -126,14 +135,14 @@ const ChatWindow = ({ onClose }) => {
             onChange={(e) => setInputText(e.target.value)}
             disabled={isTyping}
             placeholder="Type your message..."
-            className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-full pl-4 pr-12 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+            className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-800 dark:text-slate-100 rounded-full pl-4 pr-12 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm placeholder:text-gray-400 dark:placeholder:text-slate-500"
           />
           <button
             type="submit"
             disabled={!inputText.trim() || isTyping}
             className={`absolute right-1.5 p-1.5 rounded-full flex items-center justify-center transition-colors ${
               !inputText.trim() || isTyping
-                ? 'text-gray-400 bg-transparent cursor-not-allowed'
+                ? 'text-gray-400 dark:text-slate-600 bg-transparent cursor-not-allowed'
                 : 'text-white bg-blue-600 hover:bg-blue-700 shadow-sm'
             }`}
           >

@@ -290,20 +290,26 @@ export default function RoomDetails() {
                       </div>
                     </div>
                     
-                    <button 
-                      onClick={() => {
-                        if (!room.isAvailable) return;
-                        if (!user) {
-                          navigate('/signin');
-                        } else {
-                          navigate(`/booking/${id}`);
-                        }
-                      }}
-                      disabled={!room.isAvailable}
-                      className={`w-full font-bold py-4 rounded-xl transition-all block text-center uppercase tracking-widest text-xs ${!room.isAvailable ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-primary text-on-primary shadow-xl shadow-primary/20 hover:bg-primary-container hover:-translate-y-0.5 active:scale-[0.98]'}`}
-                    >
-                      {!room.isAvailable ? 'Currently Booked' : 'Book This Room'}
-                    </button>
+                    {user?.role !== 'user' ? (
+                      <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-xl text-xs font-bold uppercase tracking-widest border border-orange-200 dark:border-orange-900/30">
+                        Agents & Admins Cannot Book
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          if (!room.isAvailable) return;
+                          if (!user) {
+                            navigate('/signin');
+                          } else {
+                            navigate(`/booking/${id}`);
+                          }
+                        }}
+                        disabled={!room.isAvailable}
+                        className={`w-full font-bold py-4 rounded-xl transition-all block text-center uppercase tracking-widest text-xs ${!room.isAvailable ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-primary text-on-primary shadow-xl shadow-primary/20 hover:bg-primary-container hover:-translate-y-0.5 active:scale-[0.98]'}`}
+                      >
+                        {!room.isAvailable ? 'Currently Booked' : 'Book This Room'}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

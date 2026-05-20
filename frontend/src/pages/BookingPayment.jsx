@@ -55,7 +55,66 @@ export default function BookingPayment() {
 
       if (res.ok) {
         const bookingData = await res.json();
-        navigate('/confirmation', { state: { booking: bookingData, room } });
+        
+        // Initiate Payment
+        if (paymentMethod === 'esewa') {
+          const esewaRes = await fetch('http://localhost:5001/api/payment/esewa/initiate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}` },
+            body: JSON.stringify({ bookingId: bookingData._id, amount: serviceFee })
+          });
+          const esewaData = await esewaRes.json();
+          
+          if (!esewaRes.ok) throw new Error('eSewa initiation failed');
+          
+          // Create and submit invisible form
+          const form = document.createElement('form');
+          form.setAttribute('method', 'POST');
+          form.setAttribute('action', esewaData.epay_url);
+          
+          const params = {
+            amount: esewaData.amount,
+            tax_amount: esewaData.tax_amount,
+            total_amount: esewaData.total_amount,
+            transaction_uuid: esewaData.transaction_uuid,
+            product_code: esewaData.product_code,
+            product_service_charge: esewaData.product_service_charge,
+            product_delivery_charge: esewaData.product_delivery_charge,
+            success_url: esewaData.success_url,
+            failure_url: esewaData.failure_url,
+            signed_field_names: esewaData.signed_field_names,
+            signature: esewaData.signature
+          };
+          
+          for (const key in params) {
+            const hiddenField = document.createElement('input');
+            hiddenField.setAttribute('type', 'hidden');
+            hiddenField.setAttribute('name', key);
+            hiddenField.setAttribute('value', params[key]);
+            form.appendChild(hiddenField);
+          }
+          
+          document.body.appendChild(form);
+          form.submit();
+          
+        } else if (paymentMethod === 'khalti') {
+          const khaltiRes = await fetch('http://localhost:5001/api/payment/khalti/initiate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}` },
+            body: JSON.stringify({ 
+              bookingId: bookingData._id, 
+              amount: serviceFee,
+              name: user.fullName,
+              email: user.email,
+              phone: user.phone
+            })
+          });
+          const khaltiData = await khaltiRes.json();
+          
+          if (!khaltiRes.ok) throw new Error('Khalti initiation failed');
+          
+          window.location.href = khaltiData.payment_url;
+        }
       } else if (res.status === 401) {
         const error = await res.json();
         alert(error.message || 'Session expired. Please sign in again.');

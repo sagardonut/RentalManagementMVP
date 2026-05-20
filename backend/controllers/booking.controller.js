@@ -22,6 +22,10 @@ exports.createBooking = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized, user data missing' });
     }
 
+    if (req.user.role !== 'user') {
+      return res.status(403).json({ message: 'Only standard members can book rooms. Agents and Admins are restricted.' });
+    }
+
     const booking = await Booking.create({
       userId: req.user._id,
       roomId,

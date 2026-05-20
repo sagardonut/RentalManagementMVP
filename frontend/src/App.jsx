@@ -8,6 +8,7 @@ import Rooms from './pages/Rooms';
 import RoomDetails from './pages/RoomDetails';
 import BookingPayment from './pages/BookingPayment';
 import BookingSuccess from './pages/BookingSuccess';
+import PaymentCallback from './pages/PaymentCallback';
 import PaymentSetup from './pages/PaymentSetup';
 import UserDashboard from './pages/UserDashboard';
 import AgentDashboard from './pages/AgentDashboard';
@@ -23,6 +24,7 @@ import HelpCenter from './pages/HelpCenter';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
 import ContactUs from './pages/ContactUs';
+import NotFound from './pages/NotFound';
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingChatbot from './components/chatbot/FloatingChatbot';
@@ -41,9 +43,11 @@ function App() {
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/contact-us" element={<ContactUs />} />
           
-          {/* Booking Flow */}
+          {/* Booking & Payment Flow */}
           <Route path="/booking/:roomId" element={<BookingPayment />} />
           <Route path="/confirmation" element={<BookingSuccess />} />
+          <Route path="/payment/esewa-success" element={<PaymentCallback />} />
+          <Route path="/payment/khalti-success" element={<PaymentCallback />} />
           
           {/* Authentication */}
           <Route path="/login" element={<LoginEntry />} />
@@ -85,6 +89,9 @@ function App() {
               <SuperAdminDashboard />
             </ProtectedRoute>
           } />
+
+          {/* 404 Catch-All */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <FloatingChatbot />
         </ThemeProvider>

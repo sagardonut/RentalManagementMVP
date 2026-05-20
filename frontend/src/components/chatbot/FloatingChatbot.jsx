@@ -7,13 +7,13 @@ const FloatingChatbot = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
 
-      {/* Chat Window Container */}
+      {/* Chat Window Container — wider and taller */}
       <div
         className={`transition-all duration-300 ease-in-out transform origin-bottom-right ${isOpen
             ? 'scale-100 opacity-100 translate-y-0 mb-4'
             : 'scale-0 opacity-0 translate-y-10 pointer-events-none absolute bottom-16 right-0'
           }`}
-        style={{ width: '350px', height: '500px', maxWidth: 'calc(100vw - 48px)', maxHeight: 'calc(100vh - 120px)' }}
+        style={{ width: '420px', height: '580px', maxWidth: 'calc(100vw - 48px)', maxHeight: 'calc(100vh - 120px)' }}
       >
         {isOpen && <ChatWindow onClose={() => setIsOpen(false)} />}
       </div>
